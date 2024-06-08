@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { login as loginApi, register as registerApi, logout as logoutApi } from '../api';

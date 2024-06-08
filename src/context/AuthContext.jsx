@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 import { createContext, useState } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
+import { login as loginApi, register as registerApi, logout as logoutApi } from '../api';
 
 export const AuthContext = createContext();
 
@@ -9,16 +9,17 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const login = async (credentials) => {
-    const response = await axios.post('/auth/login', credentials);
-    setUser(response.data.user);
+    const data = await loginApi(credentials);
+    setUser(data.user);
   };
 
   const register = async (userInfo) => {
-    const response = await axios.post('/auth/register', userInfo);
-    setUser(response.data.user);
+    const data = await registerApi(userInfo);
+    setUser(data.user);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await logoutApi();
     setUser(null);
   };
 

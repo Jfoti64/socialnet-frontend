@@ -5,14 +5,7 @@ import PropTypes from 'prop-types';
 import { getCommentsForPost } from '../../api';
 import Comment from './Comment';
 
-const Post = ({
-  postAuthorFirstName,
-  postAuthorLastName,
-  postContent,
-  postDate,
-  profilePicture,
-  postId,
-}) => {
+const Post = ({ author, content, createdAt, profilePicture, postId }) => {
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -52,12 +45,12 @@ const Post = ({
           {profilePicture && (
             <img src={profilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-2" />
           )}
-          <div className="text-lg font-semibold">{`${postAuthorFirstName} ${postAuthorLastName}`}</div>
+          <div className="text-lg font-semibold">{`${author.firstName} ${author.lastName}`}</div>
         </div>
-        <div className="text-sm text-gray-400">{new Date(postDate).toLocaleDateString()}</div>
+        <div className="text-sm text-gray-400">{new Date(createdAt).toLocaleDateString()}</div>
       </div>
       <div className="mb-4">
-        <p>{postContent}</p>
+        <p>{content}</p>
       </div>
       <div className="flex items-center space-x-4 mb-4">
         <button
@@ -89,10 +82,8 @@ const Post = ({
         {comments.map((comment, index) => (
           <Comment
             key={index}
-            authorFirstName={comment.author.firstName}
-            authorLastName={comment.author.lastName}
+            author={comment.author}
             content={comment.content}
-            profilePicture={comment.author.profilePicture}
             createdAt={comment.createdAt}
           />
         ))}
@@ -102,10 +93,12 @@ const Post = ({
 };
 
 Post.propTypes = {
-  postAuthorFirstName: PropTypes.string.isRequired,
-  postAuthorLastName: PropTypes.string.isRequired,
-  postContent: PropTypes.string.isRequired,
-  postDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
+  author: PropTypes.shape({
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+  }).isRequired,
+  content: PropTypes.string.isRequired,
+  createdAt: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
   profilePicture: PropTypes.string,
   postId: PropTypes.string.isRequired,
 };

@@ -17,18 +17,6 @@ const Dashboard = () => {
     }
   };
 
-  // const handleCreatePost = async () => {
-  //   try {
-  //     const newPost = {
-  //       content: 'This is a test post',
-  //     };
-  //     await createPost(newPost);
-  //     fetchPosts(); // Refresh posts after creating a new one
-  //   } catch (error) {
-  //     console.error('Error creating post:', error);
-  //   }
-  // };
-
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -42,10 +30,9 @@ const Dashboard = () => {
           {posts.map((post) => (
             <Post
               key={post._id}
-              postAuthorFirstName={post.author.firstName}
-              postAuthorLastName={post.author.lastName}
-              postContent={post.content}
-              postDate={post.createdAt}
+              author={post.author}
+              content={post.content}
+              createdAt={post.createdAt}
               profilePicture={post.author.profilePicture}
               postId={post._id}
             />

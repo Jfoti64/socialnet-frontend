@@ -1,8 +1,15 @@
 // src/components/Post.jsx
 import { useState } from 'react';
 import { HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import PropTypes from 'prop-types';
 
-const Post = ({ postAuthor, postContent, postDate, profilePicture }) => {
+const Post = ({
+  postAuthorFirstName,
+  postAuthorLastName,
+  postContent,
+  postDate,
+  profilePicture,
+}) => {
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -26,7 +33,7 @@ const Post = ({ postAuthor, postContent, postDate, profilePicture }) => {
           {profilePicture && (
             <img src={profilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-2" />
           )}
-          <div className="text-lg font-semibold">{postAuthor}</div>
+          <div className="text-lg font-semibold">{`${postAuthorFirstName} ${postAuthorLastName}`}</div>
         </div>
         <div className="text-sm text-gray-400">{new Date(postDate).toLocaleDateString()}</div>
       </div>
@@ -68,6 +75,14 @@ const Post = ({ postAuthor, postContent, postDate, profilePicture }) => {
       </ul>
     </div>
   );
+};
+
+Post.propTypes = {
+  postAuthorFirstName: PropTypes.string.isRequired,
+  postAuthorLastName: PropTypes.string.isRequired,
+  postContent: PropTypes.string.isRequired,
+  postDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
+  profilePicture: PropTypes.string,
 };
 
 export default Post;

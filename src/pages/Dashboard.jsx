@@ -3,17 +3,33 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
 import Post from '../components/post/Post';
-import { getFeedPosts } from '../api';
+import { getFeedPosts /*createPost*/ } from '../api';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const data = await getFeedPosts();
-      setPosts(data);
-    };
+  const fetchPosts = async () => {
+    try {
+      const postsData = await getFeedPosts();
+      setPosts(postsData);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
 
+  // const handleCreatePost = async () => {
+  //   try {
+  //     const newPost = {
+  //       content: 'This is a test post',
+  //     };
+  //     await createPost(newPost);
+  //     fetchPosts(); // Refresh posts after creating a new one
+  //   } catch (error) {
+  //     console.error('Error creating post:', error);
+  //   }
+  // };
+
+  useEffect(() => {
     fetchPosts();
   }, []);
 
@@ -26,7 +42,8 @@ const Dashboard = () => {
           {posts.map((post) => (
             <Post
               key={post._id}
-              postAuthor={post.author.name}
+              postAuthorFirstName={post.author.firstName}
+              postAuthorLastName={post.author.lastName}
               postContent={post.content}
               postDate={post.createdAt}
               profilePicture={post.author.profilePicture}

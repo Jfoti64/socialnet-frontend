@@ -40,4 +40,9 @@ export const getFeedPosts = async () => {
   return response.data;
 };
 
+export const createPost = async (postData) => {
+  const response = await api.post('/posts', postData);
+  return response.data;
+};
+
 // Other APIs (posts, users, etc.) can be added here similarly

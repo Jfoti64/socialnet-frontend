@@ -9,19 +9,28 @@ const Post = ({ author, content, createdAt, profilePicture, postId }) => {
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
+  const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
 
   const fetchComments = useCallback(async () => {
     try {
       const commentData = await getCommentsForPost(postId);
       setComments(commentData);
+      setCommentCount(commentData.length); // Update the comment count
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
   }, [postId]);
 
   useEffect(() => {
-    fetchComments();
+    fetchComments(); // Fetch comments initially to get the comment count
   }, [fetchComments]);
+
+  useEffect(() => {
+    if (showComments) {
+      fetchComments();
+    }
+  }, [showComments, fetchComments]);
 
   const handleLike = () => {
     setLikes(likes + 1);
@@ -35,6 +44,7 @@ const Post = ({ author, content, createdAt, profilePicture, postId }) => {
         { content: commentText, createdAt: new Date(), author: { firstName: 'You', lastName: '' } },
       ]);
       setCommentText('');
+      setCommentCount(commentCount + 1); // Increment the comment count
     }
   };
 
@@ -62,32 +72,39 @@ const Post = ({ author, content, createdAt, profilePicture, postId }) => {
             {likes} Like{likes !== 1 && 's'}
           </span>
         </button>
-        <button className="flex items-center text-sm text-gray-400 hover:text-blue-500">
+        <button
+          className="flex items-center text-sm text-gray-400 hover:text-blue-500"
+          onClick={() => setShowComments(!showComments)}
+        >
           <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5 mr-1" />
           <span>
-            {comments.length} Comment{comments.length !== 1 && 's'}
+            {commentCount} Comment{commentCount !== 1 && 's'}
           </span>
         </button>
       </div>
-      <form onSubmit={handleComment} className="mb-4">
-        <input
-          type="text"
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          placeholder="Add a comment..."
-          className="w-full bg-gray-700 text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-        />
-      </form>
-      <ul className="space-y-2">
-        {comments.map((comment, index) => (
-          <Comment
-            key={index}
-            author={comment.author}
-            content={comment.content}
-            createdAt={comment.createdAt}
-          />
-        ))}
-      </ul>
+      {showComments && (
+        <>
+          <form onSubmit={handleComment} className="mb-4">
+            <input
+              type="text"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Add a comment..."
+              className="w-full bg-gray-700 text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            />
+          </form>
+          <ul className="space-y-2">
+            {comments.map((comment, index) => (
+              <Comment
+                key={index}
+                author={comment.author}
+                content={comment.content}
+                createdAt={comment.createdAt}
+              />
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 };

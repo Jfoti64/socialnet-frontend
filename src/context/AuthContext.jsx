@@ -2,7 +2,7 @@
 import { createContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { login as loginApi, register as registerApi, logout as logoutApi } from '../api';
-import { jwtDecode } from 'jwt-decode'; // Ensure correct import
+import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
 
@@ -12,17 +12,13 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token in useEffect:', token); // Debug statement
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
         setUser(decodedUser);
-        console.log('User set from token in localStorage: ', decodedUser); // Debug statement
       } catch (error) {
         console.error('Failed to decode token', error);
       }
-    } else {
-      console.log('No token found in localStorage'); // Debug statement
     }
     setIsCheckingAuth(false); // Indicate that auth check is complete
   }, []);

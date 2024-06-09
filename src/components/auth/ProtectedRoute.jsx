@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 const ProtectedRoute = ({ element: Element, ...rest }) => {
   const { user, isCheckingAuth } = useAuth();
-  console.log('ProtectedRoute user:', user); // Debug statement
 
   if (isCheckingAuth) {
     return <div>Loading...</div>;

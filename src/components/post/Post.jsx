@@ -1,7 +1,9 @@
 // src/components/Post.jsx
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 import PropTypes from 'prop-types';
+import { getCommentsForPost } from '../../api';
+import Comment from './Comment';
 
 const Post = ({
   postAuthorFirstName,
@@ -9,10 +11,24 @@ const Post = ({
   postContent,
   postDate,
   profilePicture,
+  postId,
 }) => {
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
+
+  const fetchComments = useCallback(async () => {
+    try {
+      const commentData = await getCommentsForPost(postId);
+      setComments(commentData);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  }, [postId]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const handleLike = () => {
     setLikes(likes + 1);
@@ -21,7 +37,10 @@ const Post = ({
   const handleComment = (e) => {
     e.preventDefault();
     if (commentText.trim()) {
-      setComments([...comments, commentText]);
+      setComments([
+        ...comments,
+        { content: commentText, createdAt: new Date(), author: { firstName: 'You', lastName: '' } },
+      ]);
       setCommentText('');
     }
   };
@@ -68,9 +87,14 @@ const Post = ({
       </form>
       <ul className="space-y-2">
         {comments.map((comment, index) => (
-          <li key={index} className="bg-gray-700 rounded-md p-2">
-            {comment}
-          </li>
+          <Comment
+            key={index}
+            authorFirstName={comment.author.firstName}
+            authorLastName={comment.author.lastName}
+            content={comment.content}
+            profilePicture={comment.author.profilePicture}
+            createdAt={comment.createdAt}
+          />
         ))}
       </ul>
     </div>
@@ -83,6 +107,7 @@ Post.propTypes = {
   postContent: PropTypes.string.isRequired,
   postDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
   profilePicture: PropTypes.string,
+  postId: PropTypes.string.isRequired,
 };
 
 export default Post;

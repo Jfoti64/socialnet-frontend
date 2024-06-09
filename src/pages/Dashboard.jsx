@@ -47,6 +47,7 @@ const Dashboard = () => {
               postContent={post.content}
               postDate={post.createdAt}
               profilePicture={post.author.profilePicture}
+              postId={post._id}
             />
           ))}
         </div>

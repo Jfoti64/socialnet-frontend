@@ -45,4 +45,9 @@ export const createPost = async (postData) => {
   return response.data;
 };
 
+export const getCommentsForPost = async (postId) => {
+  const response = await api.get(`/posts/${postId}/comments`);
+  return response.data;
+};
+
 // Other APIs (posts, users, etc.) can be added here similarly

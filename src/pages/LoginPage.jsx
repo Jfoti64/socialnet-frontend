@@ -1,22 +1,24 @@
 // src/pages/LoginPage.jsx
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import LoginForm from '../components/auth/LoginForm'; // Ensure the correct import path
 
 const LoginPage = () => {
-  const handleGoogleLogin = () => {
-    // Redirect to the backend route for Google OAuth
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (data) => {
+    try {
+      await login(data);
+      navigate('/'); // Redirect to home page or dashboard after successful login
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6">Login</h2>
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-        >
-          Login with Google
-        </button>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-6 py-12 lg:px-8">
+      <LoginForm onSubmit={handleLogin} />
     </div>
   );
 };

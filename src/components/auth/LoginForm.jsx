@@ -1,20 +1,15 @@
-// src/components/auth/RegisterForm.jsx
+// src/components/auth/LoginForm.jsx
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
 
 const schema = yup.object().shape({
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email format').required('Email is required'),
-  password: yup
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
+  password: yup.string().required('Password is required'),
 });
 
-const RegisterForm = ({ onSubmit }) => {
+const LoginForm = ({ onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -27,49 +22,12 @@ const RegisterForm = ({ onSubmit }) => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-gray-900">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-          Register for an account
+          Log in
         </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <label
-              htmlFor="firstName"
-              className="block text-sm font-medium leading-6 text-gray-300"
-            >
-              First Name
-            </label>
-            <div className="mt-2">
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                {...register('firstName')}
-                className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 bg-gray-800 focus:bg-gray-800 sm:text-sm sm:leading-6"
-              />
-              {errors.firstName && (
-                <p className="text-red-600 text-sm">{errors.firstName.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="lastName" className="block text-sm font-medium leading-6 text-gray-300">
-              Last Name
-            </label>
-            <div className="mt-2">
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                {...register('lastName')}
-                className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 bg-gray-800 focus:bg-gray-800 sm:text-sm sm:leading-6"
-              />
-              {errors.lastName && <p className="text-red-600 text-sm">{errors.lastName.message}</p>}
-            </div>
-          </div>
-
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-300">
               Email address
@@ -107,7 +65,7 @@ const RegisterForm = ({ onSubmit }) => {
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Register
+              Log in
             </button>
           </div>
         </form>
@@ -150,12 +108,12 @@ const RegisterForm = ({ onSubmit }) => {
         </div>
 
         <p className="mt-10 text-center text-sm text-gray-400">
-          Already have an account?{' '}
+          Don&apos;t have an account?{' '}
           <a
-            href="/login"
+            href="/register"
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >
-            Sign in
+            Sign up
           </a>
         </p>
       </div>
@@ -163,8 +121,8 @@ const RegisterForm = ({ onSubmit }) => {
   );
 };
 
-RegisterForm.propTypes = {
+LoginForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default RegisterForm;
+export default LoginForm;

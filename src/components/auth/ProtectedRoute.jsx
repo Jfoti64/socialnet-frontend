@@ -4,7 +4,12 @@ import { useAuth } from '../../hooks/useAuth';
 import PropTypes from 'prop-types';
 
 const ProtectedRoute = ({ element: Element, ...rest }) => {
-  const { user } = useAuth();
+  const { user, isCheckingAuth } = useAuth();
+  console.log('ProtectedRoute user:', user); // Debug statement
+
+  if (isCheckingAuth) {
+    return <div>Loading...</div>;
+  }
 
   return user ? <Element {...rest} /> : <Navigate to="/login" />;
 };

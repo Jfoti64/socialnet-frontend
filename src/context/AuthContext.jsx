@@ -8,7 +8,7 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state to indicate checking auth
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -20,7 +20,7 @@ const AuthProvider = ({ children }) => {
         console.error('Failed to decode token', error);
       }
     }
-    setIsCheckingAuth(false); // Indicate that auth check is complete
+    setIsCheckingAuth(false);
   }, []);
 
   const login = async (credentials) => {

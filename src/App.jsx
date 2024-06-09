@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
+import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AuthProvider from './context/AuthContext';
 
@@ -13,7 +13,7 @@ const App = () => {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={<ProtectedRoute element={HomePage} />} />
+          <Route path="/" element={<ProtectedRoute element={Dashboard} />} />
         </Routes>
       </AuthProvider>
     </Router>

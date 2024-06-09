@@ -74,10 +74,10 @@ const Header = () => {
                   <li key={request.id} className="flex items-center justify-between">
                     <span>{request.name}</span>
                     <div className="space-x-2">
-                      <button className="bg-green-500 text-white px-3 py-1 rounded-md">
+                      <button className="bg-indigo-600 text-white hover:bg-indigo-500 px-3 py-1 rounded-md">
                         Accept
                       </button>
-                      <button className="bg-red-500 text-white px-3 py-1 rounded-md">
+                      <button className="bg-white text-black hover:bg-red-500 hover:text-white px-3 py-1 rounded-md">
                         Decline
                       </button>
                     </div>

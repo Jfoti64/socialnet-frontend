@@ -13,8 +13,8 @@ const Sidebar = () => {
   const [active, setActive] = useState('home');
   const { logout } = useAuth();
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    logout();
     <Navigate to="/login" />;
   };
 
@@ -60,11 +60,13 @@ const Sidebar = () => {
         </div>
         <div className="pt-2 pb-4 space-y-1 text-sm">
           <li className="rounded-lg">
-            <a href="#" className="flex items-center p-2 space-x-3 rounded-md text-white">
+            <a
+              href="#"
+              className="flex items-center p-2 space-x-3 rounded-md text-white"
+              onClick={handleLogout}
+            >
               <ArrowLeftOnRectangleIcon className="w-6 h-6" />
-              <span>
-                <button onClick={handleLogout}>Logout</button>
-              </span>
+              <span>Logout</span>
             </a>
           </li>
         </div>

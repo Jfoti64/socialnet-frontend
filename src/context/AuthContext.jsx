@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 import { createContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { login as loginApi, register as registerApi, logout as logoutApi } from '../api';
+import { login as loginApi, register as registerApi } from '../api';
 import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
@@ -37,8 +37,7 @@ const AuthProvider = ({ children }) => {
     setUser(decodedUser);
   };
 
-  const logout = async () => {
-    await logoutApi();
+  const logout = () => {
     localStorage.removeItem('authToken');
     setUser(null);
   };

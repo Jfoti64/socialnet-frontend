@@ -1,3 +1,4 @@
+// src/pages/RegisterPage.jsx
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import RegisterForm from '../components/auth/RegisterForm';
@@ -16,7 +17,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-6 py-12 lg:px-8">
       <RegisterForm onSubmit={handleRegister} />
     </div>
   );

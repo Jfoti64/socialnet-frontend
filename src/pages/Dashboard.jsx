@@ -34,11 +34,11 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header />
-        <div className="p-10 text-white">
+        <div className="flex-1 overflow-auto p-10 text-white">
           {posts.map((post) => (
             <Post
               key={post._id}

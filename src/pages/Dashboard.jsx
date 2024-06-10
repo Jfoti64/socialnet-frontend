@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
 import Post from '../components/post/Post';
-import { getFeedPosts /*createPost*/ } from '../api';
+import NewPostForm from '../components/post/NewPostForm';
+import { getFeedPosts, createPost } from '../api';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
+  const [showForm, setShowForm] = useState(false); // State to manage form visibility
 
   const fetchPosts = async () => {
     try {
@@ -17,28 +19,27 @@ const Dashboard = () => {
     }
   };
 
-  // const handleCreatePost = async () => {
-  //   try {
-  //     const newPost = {
-  //       content: 'This is a test post',
-  //     };
-  //     await createPost(newPost);
-  //     fetchPosts(); // Refresh posts after creating a new one
-  //   } catch (error) {
-  //     console.error('Error creating post:', error);
-  //   }
-  // };
+  const handleCreatePost = async (content) => {
+    try {
+      await createPost({ content });
+      fetchPosts(); // Refresh posts after creating a new one
+      setShowForm(false); // Hide form after post creation
+    } catch (error) {
+      console.error('Error creating post:', error);
+    }
+  };
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header />
-        <div className="flex-1 overflow-auto p-10 text-white">
+        <Header showForm={showForm} onComposeClick={() => setShowForm(!showForm)} />
+        <div className="p-10 text-white overflow-auto">
+          {showForm && <NewPostForm onCreatePost={handleCreatePost} />}
           {posts.map((post) => (
             <Post
               key={post._id}

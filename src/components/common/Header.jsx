@@ -1,8 +1,9 @@
 // src/components/common/Header.jsx
 import { useState, useEffect, useRef } from 'react';
 import { BellIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import PropTypes from 'prop-types';
 
-const Header = () => {
+const Header = ({ showForm, onComposeClick }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [friendRequests] = useState([
     { id: 1, name: 'John Doe' },
@@ -12,10 +13,6 @@ const Header = () => {
 
   const handleBellClick = () => {
     setShowNotifications(!showNotifications);
-  };
-
-  const handleComposeClick = () => {
-    // Handle the compose new post action
   };
 
   const handleClickOutside = (event) => {
@@ -56,11 +53,11 @@ const Header = () => {
           )}
         </button>
         <button
-          onClick={handleComposeClick}
+          onClick={onComposeClick}
           className="bg-indigo-600 text-white rounded-md px-4 py-2 flex items-center space-x-2 hover:bg-indigo-500 flex-shrink-2"
         >
           <PencilSquareIcon className="w-5 h-5" />
-          <span>Compose</span>
+          <span>{showForm ? 'Cancel' : 'Compose'}</span>
         </button>
         {showNotifications && (
           <div
@@ -90,6 +87,11 @@ const Header = () => {
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  showForm: PropTypes.bool.isRequired,
+  onComposeClick: PropTypes.func.isRequired,
 };
 
 export default Header;

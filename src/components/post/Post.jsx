@@ -6,7 +6,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import PropTypes from 'prop-types';
-import { getCommentsForPost, toggleLike } from '../../api';
+import { getCommentsForPost, toggleLike, createComment } from '../../api';
 import Comment from './Comment';
 
 const Post = ({
@@ -49,15 +49,16 @@ const Post = ({
     }
   };
 
-  const handleComment = (e) => {
+  const handleComment = async (e) => {
     e.preventDefault();
     if (commentText.trim()) {
-      setComments([
-        ...comments,
-        { content: commentText, createdAt: new Date(), author: { firstName: 'You', lastName: '' } },
-      ]);
-      setCommentText('');
-      setCommentCount((prevCount) => prevCount + 1);
+      try {
+        await createComment(postId, commentText);
+        setCommentText('');
+        fetchComments(); // Refresh comments after adding a new one
+      } catch (error) {
+        console.error('Error creating comment:', error);
+      }
     }
   };
 

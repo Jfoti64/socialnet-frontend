@@ -55,4 +55,9 @@ export const toggleLike = async (postId) => {
   return response.data;
 };
 
+export const createComment = async (postId, content) => {
+  const response = await api.post(`/posts/${postId}/comments`, { content });
+  return response.data;
+};
+
 // Other APIs (posts, users, etc.) can be added here similarly

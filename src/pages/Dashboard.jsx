@@ -37,7 +37,11 @@ const Dashboard = () => {
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Header showForm={showForm} onComposeClick={() => setShowForm(!showForm)} />
+        <Header
+          showForm={showForm}
+          onComposeClick={() => setShowForm(!showForm)}
+          refreshPosts={fetchPosts}
+        />
         <div className="p-10 text-white overflow-auto">
           {showForm && <NewPostForm onCreatePost={handleCreatePost} />}
           {posts.map((post) => (

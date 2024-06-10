@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { getFriendRequests, acceptFriendRequest, rejectFriendRequest } from '../../api';
 import Notification from './Notification'; // Import the Notification component
 
-const Header = ({ showForm, onComposeClick }) => {
+const Header = ({ showForm, onComposeClick, refreshPosts }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
   const [notification, setNotification] = useState(null); // State for notification
@@ -34,6 +34,8 @@ const Header = ({ showForm, onComposeClick }) => {
       await acceptFriendRequest(requesterId);
       setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
       setNotification({ message: 'Friend request accepted', type: 'success', duration: 3000 }); // Show success notification
+      refreshPosts(); // Refresh posts after accepting a friend request
+      setShowNotifications(false);
     } catch (error) {
       setNotification({ message: 'Error accepting friend request', type: 'error', duration: 3000 }); // Show error notification
       console.error('Error accepting friend request:', error);
@@ -45,6 +47,7 @@ const Header = ({ showForm, onComposeClick }) => {
       await rejectFriendRequest(requesterId);
       setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
       setNotification({ message: 'Friend request rejected', type: 'success', duration: 3000 }); // Show success notification
+      setShowNotifications(false);
     } catch (error) {
       setNotification({ message: 'Error rejecting friend request', type: 'error', duration: 3000 }); // Show error notification
       console.error('Error rejecting friend request:', error);
@@ -155,6 +158,7 @@ const Header = ({ showForm, onComposeClick }) => {
 Header.propTypes = {
   showForm: PropTypes.bool.isRequired,
   onComposeClick: PropTypes.func.isRequired,
+  refreshPosts: PropTypes.func.isRequired, // Add PropTypes for refreshPosts
 };
 
 export default Header;

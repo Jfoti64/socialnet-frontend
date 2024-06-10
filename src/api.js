@@ -84,4 +84,29 @@ export const searchUsers = async (searchTerm) => {
   return response.data;
 };
 
+export const getUserProfile = async (userId) => {
+  const response = await api.get(`/users/profile/${userId}`);
+  return response.data;
+};
+
+export const updateUserProfile = async (userId, data) => {
+  const response = await api.put(`/me`, data);
+  return response.data;
+};
+
+export const getUserPosts = async (userId) => {
+  const response = await api.get(`/users/profile/${userId}/posts`);
+  return response.data;
+};
+
+export const getUserFriends = async (userId) => {
+  const response = await api.get(`/users/profile/${userId}/friends`);
+  return response.data;
+};
+
+export const getUserComments = async (userId) => {
+  const response = await api.get(`/users/profile/${userId}/comments`);
+  return response.data;
+};
+
 // Other APIs (posts, users, etc.) can be added here similarly

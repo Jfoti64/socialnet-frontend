@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
 import Post from '../components/post/Post';
-import { getFeedPosts /*createPost*/ } from '../api';
+import { getFeedPosts } from '../api';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -35,6 +35,7 @@ const Dashboard = () => {
               createdAt={post.createdAt}
               profilePicture={post.author.profilePicture}
               postId={post._id}
+              likeCount={post.likes.length}
             />
           ))}
         </div>

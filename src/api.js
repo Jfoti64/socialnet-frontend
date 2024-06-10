@@ -50,4 +50,14 @@ export const getCommentsForPost = async (postId) => {
   return response.data;
 };
 
+export const likePost = async (postId) => {
+  const response = await api.post(`/posts/${postId}/like`);
+  return response.data;
+};
+
+export const unlikePost = async (postId) => {
+  const response = await api.post(`/posts/${postId}/unlike`);
+  return response.data;
+};
+
 // Other APIs (posts, users, etc.) can be added here similarly

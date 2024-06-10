@@ -2,11 +2,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 import PropTypes from 'prop-types';
-import { getCommentsForPost } from '../../api';
+import { getCommentsForPost, likePost, unlikePost } from '../../api';
 import Comment from './Comment';
 
-const Post = ({ author, content, createdAt, profilePicture, postId }) => {
-  const [likes, setLikes] = useState(0);
+const Post = ({ author, content, createdAt, profilePicture, postId, likeCount }) => {
+  const [likes, setLikes] = useState(likeCount);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [showComments, setShowComments] = useState(false);
@@ -16,7 +16,7 @@ const Post = ({ author, content, createdAt, profilePicture, postId }) => {
     try {
       const commentData = await getCommentsForPost(postId);
       setComments(commentData);
-      setCommentCount(commentData.length); // Update the comment count
+      setCommentCount(commentData.length);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
@@ -26,14 +26,22 @@ const Post = ({ author, content, createdAt, profilePicture, postId }) => {
     fetchComments(); // Fetch comments initially to get the comment count
   }, [fetchComments]);
 
-  useEffect(() => {
-    if (showComments) {
-      fetchComments();
+  const handleLike = async () => {
+    try {
+      await likePost(postId);
+      setLikes((prevLikes) => prevLikes + 1);
+    } catch (error) {
+      console.error('Error liking post:', error);
     }
-  }, [showComments, fetchComments]);
+  };
 
-  const handleLike = () => {
-    setLikes(likes + 1);
+  const handleUnlike = async () => {
+    try {
+      await unlikePost(postId);
+      setLikes((prevLikes) => prevLikes - 1);
+    } catch (error) {
+      console.error('Error unliking post:', error);
+    }
   };
 
   const handleComment = (e) => {
@@ -44,7 +52,7 @@ const Post = ({ author, content, createdAt, profilePicture, postId }) => {
         { content: commentText, createdAt: new Date(), author: { firstName: 'You', lastName: '' } },
       ]);
       setCommentText('');
-      setCommentCount(commentCount + 1); // Increment the comment count
+      setCommentCount((prevCount) => prevCount + 1);
     }
   };
 
@@ -118,6 +126,7 @@ Post.propTypes = {
   createdAt: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
   profilePicture: PropTypes.string,
   postId: PropTypes.string.isRequired,
+  likeCount: PropTypes.number.isRequired,
 };
 
 export default Post;

@@ -1,18 +1,46 @@
-// src/components/common/Header.jsx
 import { useState, useEffect, useRef } from 'react';
 import { BellIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import PropTypes from 'prop-types';
+import { getFriendRequests, acceptFriendRequest, rejectFriendRequest } from '../../api';
 
 const Header = ({ showForm, onComposeClick }) => {
   const [showNotifications, setShowNotifications] = useState(false);
-  const [friendRequests] = useState([
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Doe' },
-  ]); // Example friend requests array
+  const [friendRequests, setFriendRequests] = useState([]);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const fetchFriendRequests = async () => {
+      try {
+        const requests = await getFriendRequests();
+        setFriendRequests(requests);
+      } catch (error) {
+        console.error('Error fetching friend requests:', error);
+      }
+    };
+
+    fetchFriendRequests();
+  }, []);
 
   const handleBellClick = () => {
     setShowNotifications(!showNotifications);
+  };
+
+  const handleAccept = async (requesterId) => {
+    try {
+      await acceptFriendRequest(requesterId);
+      setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    }
+  };
+
+  const handleReject = async (requesterId) => {
+    try {
+      await rejectFriendRequest(requesterId);
+      setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
+    } catch (error) {
+      console.error('Error rejecting friend request:', error);
+    }
   };
 
   const handleClickOutside = (event) => {
@@ -68,13 +96,19 @@ const Header = ({ showForm, onComposeClick }) => {
               <h4 className="text-lg font-semibold">Friend Requests</h4>
               <ul className="mt-2 space-y-2">
                 {friendRequests.map((request) => (
-                  <li key={request.id} className="flex items-center justify-between">
-                    <span>{request.name}</span>
+                  <li key={request.requester._id} className="flex items-center justify-between">
+                    <span>{`${request.requester.firstName} ${request.requester.lastName}`}</span>
                     <div className="space-x-2">
-                      <button className="bg-indigo-600 text-white hover:bg-indigo-500 px-3 py-1 rounded-md">
+                      <button
+                        onClick={() => handleAccept(request.requester._id)}
+                        className="bg-indigo-600 text-white hover:bg-indigo-500 px-3 py-1 rounded-md"
+                      >
                         Accept
                       </button>
-                      <button className="bg-white text-black hover:bg-red-500 hover:text-white px-3 py-1 rounded-md">
+                      <button
+                        onClick={() => handleReject(request.requester._id)}
+                        className="bg-white text-black hover:bg-red-500 hover:text-white px-3 py-1 rounded-md"
+                      >
                         Decline
                       </button>
                     </div>

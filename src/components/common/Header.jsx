@@ -1,12 +1,16 @@
+// src/components/common/Header.jsx
 import { useState, useEffect, useRef } from 'react';
 import { BellIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import PropTypes from 'prop-types';
 import { getFriendRequests, acceptFriendRequest, rejectFriendRequest } from '../../api';
+import Notification from './Notification'; // Import the Notification component
 
 const Header = ({ showForm, onComposeClick }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
+  const [notification, setNotification] = useState(null); // State for notification
   const dropdownRef = useRef(null);
+  const bellRef = useRef(null);
 
   useEffect(() => {
     const fetchFriendRequests = async () => {
@@ -22,14 +26,16 @@ const Header = ({ showForm, onComposeClick }) => {
   }, []);
 
   const handleBellClick = () => {
-    setShowNotifications(!showNotifications);
+    setShowNotifications((prev) => !prev);
   };
 
   const handleAccept = async (requesterId) => {
     try {
       await acceptFriendRequest(requesterId);
       setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
+      setNotification({ message: 'Friend request accepted', type: 'success', duration: 3000 }); // Show success notification
     } catch (error) {
+      setNotification({ message: 'Error accepting friend request', type: 'error', duration: 3000 }); // Show error notification
       console.error('Error accepting friend request:', error);
     }
   };
@@ -38,13 +44,19 @@ const Header = ({ showForm, onComposeClick }) => {
     try {
       await rejectFriendRequest(requesterId);
       setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
+      setNotification({ message: 'Friend request rejected', type: 'success', duration: 3000 }); // Show success notification
     } catch (error) {
+      setNotification({ message: 'Error rejecting friend request', type: 'error', duration: 3000 }); // Show error notification
       console.error('Error rejecting friend request:', error);
     }
   };
 
   const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target) &&
+      !bellRef.current.contains(event.target)
+    ) {
       setShowNotifications(false);
     }
   };
@@ -61,6 +73,10 @@ const Header = ({ showForm, onComposeClick }) => {
     };
   }, [showNotifications]);
 
+  const handleCloseNotification = () => {
+    setNotification(null); // Close notification
+  };
+
   return (
     <header className="bg-gray-900 p-4 shadow-md flex items-center justify-between space-x-4">
       <input
@@ -70,6 +86,7 @@ const Header = ({ showForm, onComposeClick }) => {
       />
       <div className="relative flex items-center space-x-4">
         <button
+          ref={bellRef}
           onClick={handleBellClick}
           className="relative bg-gray-800 text-white rounded-full p-2 hover:bg-gray-700"
         >
@@ -94,29 +111,41 @@ const Header = ({ showForm, onComposeClick }) => {
           >
             <div className="p-4">
               <h4 className="text-lg font-semibold">Friend Requests</h4>
-              <ul className="mt-2 space-y-2">
-                {friendRequests.map((request) => (
-                  <li key={request.requester._id} className="flex items-center justify-between">
-                    <span>{`${request.requester.firstName} ${request.requester.lastName}`}</span>
-                    <div className="space-x-2">
-                      <button
-                        onClick={() => handleAccept(request.requester._id)}
-                        className="bg-indigo-600 text-white hover:bg-indigo-500 px-3 py-1 rounded-md"
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => handleReject(request.requester._id)}
-                        className="bg-white text-black hover:bg-red-500 hover:text-white px-3 py-1 rounded-md"
-                      >
-                        Decline
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {friendRequests.length === 0 ? (
+                <div className="mt-2 text-gray-400">No friend requests</div>
+              ) : (
+                <ul className="mt-2 space-y-2 max-h-60 overflow-y-auto">
+                  {friendRequests.map((request) => (
+                    <li key={request.requester._id} className="flex items-center justify-between">
+                      <span>{`${request.requester.firstName} ${request.requester.lastName}`}</span>
+                      <div className="space-x-2">
+                        <button
+                          onClick={() => handleAccept(request.requester._id)}
+                          className="bg-indigo-600 text-white hover:bg-indigo-500 px-3 py-1 rounded-md"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleReject(request.requester._id)}
+                          className="bg-white text-black hover:bg-red-500 hover:text-white px-3 py-1 rounded-md"
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
+        )}
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            duration={notification.duration}
+            onClose={handleCloseNotification}
+          />
         )}
       </div>
     </header>

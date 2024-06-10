@@ -79,4 +79,9 @@ export const rejectFriendRequest = async (requesterId) => {
   return response.data;
 };
 
+export const searchUsers = async (searchTerm) => {
+  const response = await api.get(`/users/search?q=${searchTerm}`);
+  return response.data;
+};
+
 // Other APIs (posts, users, etc.) can be added here similarly

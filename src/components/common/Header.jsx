@@ -1,14 +1,20 @@
-// src/components/common/Header.jsx
 import { useState, useEffect, useRef } from 'react';
 import { BellIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import PropTypes from 'prop-types';
-import { getFriendRequests, acceptFriendRequest, rejectFriendRequest } from '../../api';
+import {
+  getFriendRequests,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  searchUsers,
+} from '../../api';
 import Notification from './Notification'; // Import the Notification component
 
 const Header = ({ showForm, onComposeClick, refreshPosts }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
   const [notification, setNotification] = useState(null); // State for notification
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
 
@@ -76,17 +82,63 @@ const Header = ({ showForm, onComposeClick, refreshPosts }) => {
     };
   }, [showNotifications]);
 
+  const handleSearch = async (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value.trim() === '') {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const results = await searchUsers(e.target.value);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Error searching users:', error);
+    }
+  };
+
   const handleCloseNotification = () => {
     setNotification(null); // Close notification
   };
 
   return (
     <header className="bg-gray-900 p-4 shadow-md flex items-center justify-between space-x-4">
-      <input
-        type="text"
-        placeholder="Search Users..."
-        className="bg-gray-800 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-600 w-1/2"
-      />
+      <div className="relative w-1/2">
+        <input
+          type="text"
+          placeholder="Search Users..."
+          className="bg-gray-800 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-600 w-full"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+        {searchResults.length > 0 && (
+          <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50">
+            <ul className="max-h-60 overflow-y-auto">
+              {searchResults.map((user) => (
+                <li
+                  key={user._id}
+                  className="p-2 hover:bg-gray-700 cursor-pointer"
+                  onClick={() => (window.location.href = `/profile/${user._id}`)}
+                >
+                  <div className="flex items-center">
+                    {user.profilePicture && (
+                      <img
+                        src={user.profilePicture}
+                        alt={`${user.firstName} ${user.lastName}`}
+                        className="w-8 h-8 rounded-full mr-2"
+                      />
+                    )}
+                    <div>
+                      <div>{`${user.firstName} ${user.lastName}`}</div>
+                      <div className="text-sm text-gray-400">{user.email}</div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
       <div className="relative flex items-center space-x-4">
         <button
           ref={bellRef}

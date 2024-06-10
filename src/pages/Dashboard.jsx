@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
 import Post from '../components/post/Post';
-import { getFeedPosts } from '../api';
+import { getFeedPosts /*createPost*/ } from '../api';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -16,6 +16,18 @@ const Dashboard = () => {
       console.error('Error fetching posts:', error);
     }
   };
+
+  // const handleCreatePost = async () => {
+  //   try {
+  //     const newPost = {
+  //       content: 'This is a test post',
+  //     };
+  //     await createPost(newPost);
+  //     fetchPosts(); // Refresh posts after creating a new one
+  //   } catch (error) {
+  //     console.error('Error creating post:', error);
+  //   }
+  // };
 
   useEffect(() => {
     fetchPosts();
@@ -36,6 +48,7 @@ const Dashboard = () => {
               profilePicture={post.author.profilePicture}
               postId={post._id}
               likeCount={post.likes.length}
+              initialIsLiked={post.isLiked}
             />
           ))}
         </div>

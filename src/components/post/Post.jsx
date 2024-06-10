@@ -1,12 +1,25 @@
 // src/components/Post.jsx
 import { useState, useEffect, useCallback } from 'react';
-import { HeartIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import {
+  HeartIcon as HeartIconOutline,
+  ChatBubbleOvalLeftEllipsisIcon,
+} from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import PropTypes from 'prop-types';
-import { getCommentsForPost, likePost, unlikePost } from '../../api';
+import { getCommentsForPost, toggleLike } from '../../api';
 import Comment from './Comment';
 
-const Post = ({ author, content, createdAt, profilePicture, postId, likeCount }) => {
+const Post = ({
+  author,
+  content,
+  createdAt,
+  profilePicture,
+  postId,
+  likeCount,
+  initialIsLiked,
+}) => {
   const [likes, setLikes] = useState(likeCount);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [showComments, setShowComments] = useState(false);
@@ -26,21 +39,13 @@ const Post = ({ author, content, createdAt, profilePicture, postId, likeCount })
     fetchComments(); // Fetch comments initially to get the comment count
   }, [fetchComments]);
 
-  const handleLike = async () => {
+  const handleLikeToggle = async () => {
     try {
-      await likePost(postId);
-      setLikes((prevLikes) => prevLikes + 1);
+      await toggleLike(postId);
+      setIsLiked(!isLiked);
+      setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
     } catch (error) {
-      console.error('Error liking post:', error);
-    }
-  };
-
-  const handleUnlike = async () => {
-    try {
-      await unlikePost(postId);
-      setLikes((prevLikes) => prevLikes - 1);
-    } catch (error) {
-      console.error('Error unliking post:', error);
+      console.error('Error toggling like:', error);
     }
   };
 
@@ -72,10 +77,16 @@ const Post = ({ author, content, createdAt, profilePicture, postId, likeCount })
       </div>
       <div className="flex items-center space-x-4 mb-4">
         <button
-          onClick={handleLike}
-          className="flex items-center text-sm text-gray-400 hover:text-red-500"
+          onClick={handleLikeToggle}
+          className={`flex items-center text-sm text-gray-400 hover:text-red-500 ${
+            isLiked ? 'text-red-500' : ''
+          }`}
         >
-          <HeartIcon className="w-5 h-5 mr-1" />
+          {isLiked ? (
+            <HeartIconSolid className="w-5 h-5 mr-1" />
+          ) : (
+            <HeartIconOutline className="w-5 h-5 mr-1" />
+          )}
           <span>
             {likes} Like{likes !== 1 && 's'}
           </span>
@@ -127,6 +138,7 @@ Post.propTypes = {
   profilePicture: PropTypes.string,
   postId: PropTypes.string.isRequired,
   likeCount: PropTypes.number.isRequired,
+  initialIsLiked: PropTypes.bool.isRequired,
 };
 
 export default Post;

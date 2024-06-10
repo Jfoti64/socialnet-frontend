@@ -50,13 +50,8 @@ export const getCommentsForPost = async (postId) => {
   return response.data;
 };
 
-export const likePost = async (postId) => {
-  const response = await api.post(`/posts/${postId}/like`);
-  return response.data;
-};
-
-export const unlikePost = async (postId) => {
-  const response = await api.post(`/posts/${postId}/unlike`);
+export const toggleLike = async (postId) => {
+  const response = await api.post(`/posts/${postId}/toggle-like`);
   return response.data;
 };
 

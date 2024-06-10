@@ -1,4 +1,3 @@
-// src/components/Post.jsx
 import { useState, useEffect, useCallback } from 'react';
 import {
   HeartIcon as HeartIconOutline,
@@ -8,6 +7,7 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import PropTypes from 'prop-types';
 import { getCommentsForPost, toggleLike, createComment } from '../../api';
 import Comment from './Comment';
+import ProfilePicture from '../common/ProfilePicture';
 
 const Post = ({
   author,
@@ -67,9 +67,12 @@ const Post = ({
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center">
           {profilePicture && (
-            <img src={profilePicture} alt="Profile" className="w-10 h-10 rounded-full mr-2" />
+            <ProfilePicture
+              profilePicture={profilePicture}
+              alt={`${author.firstName} ${author.lastName}`}
+            />
           )}
-          <div className="text-lg font-semibold">{`${author.firstName} ${author.lastName}`}</div>
+          <div className="text-lg font-semibold ml-2">{`${author.firstName} ${author.lastName}`}</div>
         </div>
         <div className="text-sm text-gray-400">{new Date(createdAt).toLocaleDateString()}</div>
       </div>
@@ -113,7 +116,7 @@ const Post = ({
               className="w-full bg-gray-700 text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-600"
             />
           </form>
-          <ul className="space-y-2">
+          <ul className="space-y-2 max-h-60 overflow-y-auto">
             {comments.map((comment, index) => (
               <Comment
                 key={index}

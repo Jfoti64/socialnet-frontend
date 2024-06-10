@@ -1,14 +1,14 @@
-// src/components/post/Comment.jsx
 import PropTypes from 'prop-types';
+import ProfilePicture from '../common/ProfilePicture';
 
 const Comment = ({ author, content, createdAt }) => {
   return (
     <div className="bg-gray-700 rounded-md p-2 mb-2">
       <div className="flex items-center mb-2">
         {author.profilePicture && (
-          <img src={author.profilePicture} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+          <ProfilePicture profilePicture={author.profilePicture} alt="Profile" size="small" />
         )}
-        <div className="flex flex-col">
+        <div className="flex flex-col ml-2">
           <span className="font-semibold text-white">{`${author.firstName} ${author.lastName}`}</span>
           <span className="text-sm text-gray-400">{new Date(createdAt).toLocaleDateString()}</span>
         </div>

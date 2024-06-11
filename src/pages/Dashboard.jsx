@@ -41,6 +41,7 @@ const Dashboard = () => {
           showForm={showForm}
           onComposeClick={() => setShowForm(!showForm)}
           refreshPosts={fetchPosts}
+          showComposeButton={true}
         />
         <div className="p-10 text-white overflow-auto">
           {showForm && <NewPostForm onCreatePost={handleCreatePost} />}

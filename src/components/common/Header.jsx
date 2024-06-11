@@ -9,7 +9,12 @@ import {
 } from '../../api';
 import Notification from './Notification'; // Import the Notification component
 
-const Header = ({ showForm, onComposeClick, refreshPosts }) => {
+const Header = ({
+  showForm = false,
+  onComposeClick = null,
+  refreshPosts,
+  showComposeButton = true,
+}) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
   const [notification, setNotification] = useState(null); // State for notification
@@ -152,13 +157,15 @@ const Header = ({ showForm, onComposeClick, refreshPosts }) => {
             </span>
           )}
         </button>
-        <button
-          onClick={onComposeClick}
-          className="bg-indigo-600 text-white rounded-md px-4 py-2 flex items-center space-x-2 hover:bg-indigo-500 flex-shrink-2"
-        >
-          <PencilSquareIcon className="w-5 h-5" />
-          <span>{showForm ? 'Cancel' : 'Compose'}</span>
-        </button>
+        {showComposeButton && (
+          <button
+            onClick={onComposeClick}
+            className="bg-indigo-600 text-white rounded-md px-4 py-2 flex items-center space-x-2 hover:bg-indigo-500 flex-shrink-2"
+          >
+            <PencilSquareIcon className="w-5 h-5" />
+            <span>{showForm ? 'Cancel' : 'Compose'}</span>
+          </button>
+        )}
         {showNotifications && (
           <div
             ref={dropdownRef}
@@ -208,9 +215,10 @@ const Header = ({ showForm, onComposeClick, refreshPosts }) => {
 };
 
 Header.propTypes = {
-  showForm: PropTypes.bool.isRequired,
-  onComposeClick: PropTypes.func.isRequired,
-  refreshPosts: PropTypes.func.isRequired, // Add PropTypes for refreshPosts
+  showForm: PropTypes.bool,
+  onComposeClick: PropTypes.func,
+  refreshPosts: PropTypes.func.isRequired,
+  showComposeButton: PropTypes.bool,
 };
 
 export default Header;

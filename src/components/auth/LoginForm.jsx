@@ -18,6 +18,10 @@ const LoginForm = ({ onSubmit }) => {
     resolver: yupResolver(schema),
   });
 
+  const handleFormSubmit = (data) => {
+    onSubmit(data);
+  };
+
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-gray-900">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -27,7 +31,7 @@ const LoginForm = ({ onSubmit }) => {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-6" onSubmit={handleSubmit(handleFormSubmit)}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-300">
               Email address

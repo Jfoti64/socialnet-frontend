@@ -9,6 +9,7 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -18,32 +19,44 @@ const AuthProvider = ({ children }) => {
         setUser(decodedUser);
       } catch (error) {
         console.error('Failed to decode token', error);
+        setAuthError('Failed to decode token');
       }
     }
     setIsCheckingAuth(false);
   }, []);
 
   const login = async (credentials) => {
-    const data = await loginApi(credentials);
-    localStorage.setItem('authToken', data.token);
-    const decodedUser = jwtDecode(data.token);
-    setUser(decodedUser);
+    try {
+      const data = await loginApi(credentials);
+      localStorage.setItem('authToken', data.token);
+      const decodedUser = jwtDecode(data.token);
+      setUser(decodedUser);
+      setAuthError(null);
+    } catch (error) {
+      setAuthError('Login failed');
+    }
   };
 
   const register = async (userInfo) => {
-    const data = await registerApi(userInfo);
-    localStorage.setItem('authToken', data.token);
-    const decodedUser = jwtDecode(data.token);
-    setUser(decodedUser);
+    try {
+      const data = await registerApi(userInfo);
+      localStorage.setItem('authToken', data.token);
+      const decodedUser = jwtDecode(data.token);
+      setUser(decodedUser);
+      setAuthError(null);
+    } catch (error) {
+      setAuthError('Registration failed');
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
     setUser(null);
+    setAuthError(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isCheckingAuth }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isCheckingAuth, authError }}>
       {children}
     </AuthContext.Provider>
   );

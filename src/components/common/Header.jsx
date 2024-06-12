@@ -13,7 +13,7 @@ const Header = ({
   showForm = false,
   onComposeClick = null,
   refreshPosts,
-  showComposeButton = true,
+  showComposeButton = false,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
@@ -149,6 +149,7 @@ const Header = ({
           ref={bellRef}
           onClick={handleBellClick}
           className="relative bg-gray-800 text-white rounded-full p-2 hover:bg-gray-700"
+          aria-label="Notifications"
         >
           <BellIcon className="w-6 h-6" />
           {friendRequests.length > 0 && (

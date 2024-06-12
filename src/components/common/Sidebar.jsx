@@ -1,6 +1,6 @@
 // src/components/common/Sidebar.jsx
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import {
   HomeIcon,
   UserIcon,
@@ -27,47 +27,47 @@ const Sidebar = () => {
         <div className="flex-1">
           <ul className="pt-2 pb-4 space-y-1 text-sm">
             <li className={`rounded-lg ${active === 'home' ? 'bg-gray-800' : ''}`}>
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="flex items-center p-2 space-x-3 rounded-md text-white"
                 onClick={() => setActive('home')}
               >
                 <HomeIcon className="w-6 h-6" />
                 <span>Home</span>
-              </a>
+              </Link>
             </li>
             <li className={`rounded-lg ${active === 'profile' ? 'bg-gray-800' : ''}`}>
-              <a
-                href="#"
+              <Link
+                to="#"
                 className="flex items-center p-2 space-x-3 rounded-md text-white"
                 onClick={() => setActive('profile')}
               >
                 <UserIcon className="w-6 h-6" />
                 <span>Profile</span>
-              </a>
+              </Link>
             </li>
             <li className={`rounded-lg ${active === 'settings' ? 'bg-gray-800' : ''}`}>
-              <a
-                href="#"
+              <Link
+                to="#"
                 className="flex items-center p-2 space-x-3 rounded-md text-white"
                 onClick={() => setActive('settings')}
               >
                 <Cog6ToothIcon className="w-6 h-6" />
                 <span>Settings</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
         <div className="pt-2 pb-4 space-y-1 text-sm">
           <li className="rounded-lg">
-            <a
-              href="#"
+            <Link
+              to="#"
               className="flex items-center p-2 space-x-3 rounded-md text-white"
               onClick={handleLogout}
             >
               <ArrowLeftOnRectangleIcon className="w-6 h-6" />
               <span>Logout</span>
-            </a>
+            </Link>
           </li>
         </div>
       </div>

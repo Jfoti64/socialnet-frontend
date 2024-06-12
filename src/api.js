@@ -34,6 +34,11 @@ export const register = async (userInfo) => {
   return response.data;
 };
 
+export const getPost = async (postId) => {
+  const response = await api.get(`/posts/${postId}`);
+  return response.data;
+};
+
 export const getFeedPosts = async () => {
   const response = await api.get('/posts/feed');
   return response.data;

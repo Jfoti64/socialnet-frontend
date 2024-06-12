@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { getCommentsForPost, toggleLike, createComment } from '../../api';
 import Comment from './Comment';
 import ProfilePicture from '../common/ProfilePicture';
+import { Link } from 'react-router-dom';
 
 const Post = ({
   author,
@@ -77,7 +78,9 @@ const Post = ({
         <div className="text-sm text-gray-400">{new Date(createdAt).toLocaleDateString()}</div>
       </div>
       <div className="mb-4">
-        <p>{content}</p>
+        <Link to={`/post/${postId}`}>
+          <p>{content}</p>
+        </Link>
       </div>
       <div className="flex items-center space-x-4 mb-4">
         <button

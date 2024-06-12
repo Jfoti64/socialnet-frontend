@@ -1,4 +1,3 @@
-// src/tests/api.test.js
 import { vi } from 'vitest';
 import axios from 'axios';
 import * as api from '../api';
@@ -39,6 +38,16 @@ describe('API functions', () => {
 
   afterEach(() => {
     vi.resetAllMocks();
+  });
+
+  const mockToken = 'mockToken';
+
+  beforeEach(() => {
+    localStorage.setItem('authToken', mockToken);
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('authToken');
   });
 
   it('should call login API', async () => {
@@ -239,5 +248,25 @@ describe('API functions', () => {
 
     expect(response).toEqual(mockData);
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/users/profile/1/comments');
+  });
+
+  // Add additional tests for edge cases, such as empty responses or unexpected data formats
+  it('should handle empty response from getFeedPosts API', async () => {
+    mockAxiosInstance.get.mockResolvedValue({ data: [] });
+
+    const response = await api.getFeedPosts();
+
+    expect(response).toEqual([]);
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/posts/feed');
+  });
+
+  it('should handle unexpected data format in getFeedPosts API', async () => {
+    const mockData = { unexpectedKey: 'unexpectedValue' };
+    mockAxiosInstance.get.mockResolvedValue({ data: mockData });
+
+    const response = await api.getFeedPosts();
+
+    expect(response).toEqual(mockData);
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/posts/feed');
   });
 });

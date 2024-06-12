@@ -1,6 +1,6 @@
 // src/components/common/Sidebar.jsx
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   HomeIcon,
   UserIcon,
@@ -12,10 +12,11 @@ import { useAuth } from '../../hooks/useAuth';
 const Sidebar = () => {
   const [active, setActive] = useState('home');
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    <Navigate to="/login" />;
+    navigate('/login');
   };
 
   return (
@@ -60,14 +61,13 @@ const Sidebar = () => {
         </div>
         <div className="pt-2 pb-4 space-y-1 text-sm">
           <li className="rounded-lg">
-            <Link
-              to="#"
-              className="flex items-center p-2 space-x-3 rounded-md text-white"
+            <button
+              className="flex items-center p-2 space-x-3 rounded-md text-white w-full"
               onClick={handleLogout}
             >
               <ArrowLeftOnRectangleIcon className="w-6 h-6" />
               <span>Logout</span>
-            </Link>
+            </button>
           </li>
         </div>
       </div>

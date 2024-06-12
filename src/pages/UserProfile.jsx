@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getUserProfile, getUserPosts, getUserFriends, getUserComments } from '../api';
 import ProfilePicture from '../components/common/ProfilePicture';
 import { useAuth } from '../hooks/useAuth';
@@ -120,7 +120,12 @@ const UserProfile = () => {
                             profilePicture={friend.profilePicture}
                             alt={`${friend.firstName} ${friend.lastName}`}
                           />
-                          <p>{`${friend.firstName} ${friend.lastName}`}</p>
+                          <Link
+                            to={`/profile/${friend._id}`}
+                            className="text-indigo-400 hover:underline"
+                          >
+                            {`${friend.firstName} ${friend.lastName}`}
+                          </Link>
                         </li>
                       ))}
                     </ul>

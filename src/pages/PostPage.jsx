@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getPost, getCommentsForPost } from '../api';
+import { getPost, getCommentsForPost, toggleLike } from '../api';
 import ProfilePicture from '../components/common/ProfilePicture';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
+import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
 const PostPage = () => {
   const { postId } = useParams();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
 
   useEffect(() => {
     const fetchPostAndComments = async () => {
@@ -17,6 +21,8 @@ const PostPage = () => {
         const commentsData = await getCommentsForPost(postId);
         setPost(postData);
         setComments(commentsData);
+        setIsLiked(postData.likes.includes(postData.author._id)); // Assuming current user id is in the likes array
+        setLikes(postData.likes.length);
       } catch (error) {
         console.error('Error fetching post or comments:', error);
       }
@@ -24,6 +30,16 @@ const PostPage = () => {
 
     fetchPostAndComments();
   }, [postId]);
+
+  const handleLikeToggle = async () => {
+    try {
+      await toggleLike(postId);
+      setIsLiked(!isLiked);
+      setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
+  };
 
   if (!post) {
     return <div>Loading...</div>;
@@ -58,6 +74,23 @@ const PostPage = () => {
               </div>
             </div>
             <p className="text-lg">{post.content}</p>
+            <div className="flex items-center space-x-4 mt-4">
+              <button
+                onClick={handleLikeToggle}
+                className={`flex items-center text-sm text-gray-400 hover:text-red-500 ${
+                  isLiked ? 'text-red-500' : ''
+                }`}
+              >
+                {isLiked ? (
+                  <HeartIconSolid className="w-5 h-5 mr-1" />
+                ) : (
+                  <HeartIconOutline className="w-5 h-5 mr-1" />
+                )}
+                <span>
+                  {likes} Like{likes !== 1 && 's'}
+                </span>
+              </button>
+            </div>
           </div>
           <div className="bg-gray-800 text-white p-4 rounded-md shadow-md">
             <h2 className="text-xl font-semibold mb-4">Comments</h2>

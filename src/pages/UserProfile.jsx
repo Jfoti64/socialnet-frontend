@@ -58,7 +58,7 @@ const UserProfile = () => {
   const isFriend = userProfile.friends.includes(user.id);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header
@@ -67,7 +67,7 @@ const UserProfile = () => {
           refreshPosts={() => {}}
           showComposeButton={false}
         />
-        <div className="p-4">
+        <div className="p-4 overflow-auto">
           <div className="bg-gray-800 text-white p-4 rounded-md shadow-md">
             <div className="flex items-center space-x-4">
               <ProfilePicture

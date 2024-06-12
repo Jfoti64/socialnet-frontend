@@ -7,6 +7,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import AuthProvider from './context/AuthContext';
 import AuthSuccess from './pages/AuthSuccess';
 import UserProfile from './pages/UserProfile';
+import PostPage from './pages/PostPage';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/auth/success" element={<AuthSuccess />} />
           <Route path="/profile/:userId" element={<UserProfile />} />
           <Route path="/" element={<ProtectedRoute element={Dashboard} />} />
+          <Route path="/post/:postId" element={<PostPage />} />
         </Routes>
       </AuthProvider>
     </Router>

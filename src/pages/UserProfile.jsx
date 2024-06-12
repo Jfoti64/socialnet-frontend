@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getUserProfile, getUserPosts, getUserFriends, getUserComments } from '../api';
+import { getUserProfile, getUserPosts, getUserFriends, getUserComments, getPost } from '../api';
 import ProfilePicture from '../components/common/ProfilePicture';
 import { useAuth } from '../hooks/useAuth';
 import Sidebar from '../components/common/Sidebar';
@@ -22,16 +22,24 @@ const UserProfile = () => {
           const profile = await getUserProfile(userId);
           setUserProfile(profile);
 
-          // Fetch user's posts, friends, and comments if the current user is friends with the selected user
           if (profile.friends.includes(user.id) || user.id === userId) {
             const [posts, friends, comments] = await Promise.all([
               getUserPosts(userId),
               getUserFriends(userId),
               getUserComments(userId),
             ]);
+
+            // Fetch post details for each comment
+            const commentsWithPostDetails = await Promise.all(
+              comments.map(async (comment) => {
+                const post = await getPost(comment.post);
+                return { ...comment, post };
+              })
+            );
+
             setUserPosts(posts);
             setUserFriends(friends);
-            setUserComments(comments);
+            setUserComments(commentsWithPostDetails);
           }
         } catch (error) {
           console.error('Error fetching user profile:', error);
@@ -101,7 +109,26 @@ const UserProfile = () => {
                     <ul className="mt-2 space-y-2">
                       {userPosts.map((post) => (
                         <li key={post._id} className="bg-gray-700 p-4 rounded-md">
-                          <p>{post.content}</p>
+                          <div className="flex items-center space-x-4">
+                            <ProfilePicture
+                              profilePicture={userProfile.profilePicture}
+                              alt={`${userProfile.firstName} ${userProfile.lastName}`}
+                            />
+                            <div>
+                              <Link
+                                to={`/profile/${userProfile._id}`}
+                                className="text-white hover:underline"
+                              >
+                                {`${userProfile.firstName} ${userProfile.lastName}`}
+                              </Link>
+                              <p className="text-gray-400 text-sm">
+                                {new Date(post.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                          <Link to={`/post/${post._id}`}>
+                            <p className="mt-2 text-white hover:underline">{post.content}</p>
+                          </Link>
                         </li>
                       ))}
                     </ul>
@@ -122,7 +149,7 @@ const UserProfile = () => {
                           />
                           <Link
                             to={`/profile/${friend._id}`}
-                            className="text-indigo-400 hover:underline"
+                            className="text-white hover:underline"
                           >
                             {`${friend.firstName} ${friend.lastName}`}
                           </Link>
@@ -137,7 +164,30 @@ const UserProfile = () => {
                     <ul className="mt-2 space-y-2">
                       {userComments.map((comment) => (
                         <li key={comment._id} className="bg-gray-700 p-4 rounded-md">
-                          <p>{comment.content}</p>
+                          <div className="flex items-center space-x-4">
+                            <ProfilePicture
+                              profilePicture={comment.author?.profilePicture}
+                              alt={`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                            />
+                            <div>
+                              <Link
+                                to={`/profile/${comment.author?._id || ''}`}
+                                className="text-white hover:underline"
+                              >
+                                {`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                              </Link>
+                              <p className="text-gray-400 text-sm">
+                                {new Date(comment.createdAt).toLocaleString()}
+                              </p>
+                              <Link
+                                to={`/post/${comment.post._id}`}
+                                className="text-gray-400 text-sm hover:underline"
+                              >
+                                View Post
+                              </Link>
+                            </div>
+                          </div>
+                          <p className="mt-2 text-white">{comment.content}</p>
                         </li>
                       ))}
                     </ul>

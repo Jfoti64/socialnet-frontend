@@ -1,3 +1,4 @@
+// src/pages/UserProfile.jsx
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getUserProfile, getUserPosts, getUserFriends, getUserComments, getPost } from '../api';
@@ -13,6 +14,8 @@ const UserProfile = () => {
   const [userFriends, setUserFriends] = useState([]);
   const [userComments, setUserComments] = useState([]);
   const [activeTab, setActiveTab] = useState('posts');
+  const [sortCriteria, setSortCriteria] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc');
   const { user, isCheckingAuth } = useAuth();
 
   useEffect(() => {
@@ -49,6 +52,24 @@ const UserProfile = () => {
       fetchUserProfile();
     }
   }, [userId, user, isCheckingAuth]);
+
+  const sortItems = (items, criteria, order) => {
+    return items.slice().sort((a, b) => {
+      if (criteria === 'date') {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return order === 'asc' ? dateA - dateB : dateB - dateA;
+      } else if (criteria === 'likes') {
+        const likesA = a.likeCount || 0;
+        const likesB = b.likeCount || 0;
+        return order === 'asc' ? likesA - likesB : likesB - likesA;
+      }
+      return 0;
+    });
+  };
+
+  const sortedPosts = sortItems(userPosts, sortCriteria, sortOrder);
+  const sortedComments = sortItems(userComments, sortCriteria, sortOrder);
 
   if (isCheckingAuth || !userProfile) {
     return <div>Loading...</div>;
@@ -102,12 +123,30 @@ const UserProfile = () => {
                   Comments
                 </button>
               </div>
+              <div className="mt-4 flex space-x-4">
+                <select
+                  className="bg-gray-800 text-white rounded-md px-4 py-2"
+                  value={sortCriteria}
+                  onChange={(e) => setSortCriteria(e.target.value)}
+                >
+                  <option value="date">Date</option>
+                  <option value="likes">Likes</option>
+                </select>
+                <select
+                  className="bg-gray-800 text-white rounded-md px-4 py-2"
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                >
+                  <option value="asc">Ascending</option>
+                  <option value="desc">Descending</option>
+                </select>
+              </div>
               <div className="mt-4">
                 {activeTab === 'posts' && (
                   <div>
                     <h2 className="text-xl font-semibold text-white">Posts</h2>
                     <ul className="mt-2 space-y-2">
-                      {userPosts.map((post) => (
+                      {sortedPosts.map((post) => (
                         <li key={post._id} className="bg-gray-700 p-4 rounded-md">
                           <div className="flex items-center space-x-4">
                             <ProfilePicture
@@ -123,6 +162,9 @@ const UserProfile = () => {
                               </Link>
                               <p className="text-gray-400 text-sm">
                                 {new Date(post.createdAt).toLocaleString()}
+                              </p>
+                              <p className="text-gray-400 text-sm">
+                                {post.likeCount} {post.likeCount === 1 ? 'Like' : 'Likes'}
                               </p>
                             </div>
                           </div>
@@ -162,7 +204,7 @@ const UserProfile = () => {
                   <div>
                     <h2 className="text-xl font-semibold text-white">Comments</h2>
                     <ul className="mt-2 space-y-2">
-                      {userComments.map((comment) => (
+                      {sortedComments.map((comment) => (
                         <li key={comment._id} className="bg-gray-700 p-4 rounded-md">
                           <div className="flex items-center space-x-4">
                             <ProfilePicture

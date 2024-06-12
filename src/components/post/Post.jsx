@@ -73,7 +73,12 @@ const Post = ({
               alt={`${author.firstName} ${author.lastName}`}
             />
           )}
-          <div className="text-lg font-semibold ml-2">{`${author.firstName} ${author.lastName}`}</div>
+          <Link
+            to={`/profile/${author._id}`}
+            className="text-lg font-semibold ml-2 hover:underline"
+          >
+            {`${author.firstName} ${author.lastName}`}
+          </Link>
         </div>
         <div className="text-sm text-gray-400">{new Date(createdAt).toLocaleDateString()}</div>
       </div>
@@ -137,6 +142,7 @@ const Post = ({
 
 Post.propTypes = {
   author: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
   }).isRequired,

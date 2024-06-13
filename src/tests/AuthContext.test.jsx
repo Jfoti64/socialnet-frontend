@@ -1,25 +1,21 @@
-// src/tests/AuthContext.test.jsx
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AuthProvider, { AuthContext } from '../context/AuthContext';
 import * as api from '../api';
 import jwt from 'jsonwebtoken';
 import { vi } from 'vitest';
+import { jwtDecode } from 'jwt-decode';
 
-// Mock console.error to suppress error output
-beforeAll(() => {
-  vi.spyOn(console, 'error').mockImplementation(() => {});
-});
+// Mock jwtDecode
+vi.mock('jwt-decode', () => ({
+  __esModule: true,
+  jwtDecode: vi.fn(),
+}));
 
 // Clear localStorage and reset mocks after each test
 afterEach(() => {
   localStorage.clear();
   vi.resetAllMocks();
-});
-
-// Restore console.error after all tests
-afterAll(() => {
-  console.error.mockRestore();
 });
 
 describe('AuthContext', () => {
@@ -47,6 +43,7 @@ describe('AuthContext', () => {
   it('provides user when token exists in localStorage', () => {
     const token = jwt.sign({ name: 'Test User' }, 'testSecret');
     localStorage.setItem('authToken', token);
+    jwtDecode.mockReturnValue({ name: 'Test User' });
 
     const TestComponent = () => {
       const { user } = React.useContext(AuthContext);
@@ -66,6 +63,7 @@ describe('AuthContext', () => {
     const mockUser = { name: 'Test User' };
     const token = jwt.sign(mockUser, 'testSecret');
     vi.spyOn(api, 'login').mockResolvedValue({ token });
+    jwtDecode.mockReturnValue(mockUser);
 
     const TestComponent = () => {
       const { user, login } = React.useContext(AuthContext);
@@ -92,6 +90,7 @@ describe('AuthContext', () => {
   it('logs out the user', () => {
     const token = jwt.sign({ name: 'Test User' }, 'testSecret');
     localStorage.setItem('authToken', token);
+    jwtDecode.mockReturnValue({ name: 'Test User' });
 
     const TestComponent = () => {
       const { user, logout } = React.useContext(AuthContext);
@@ -119,6 +118,7 @@ describe('AuthContext', () => {
     const mockUser = { name: 'New User' };
     const token = jwt.sign(mockUser, 'testSecret');
     vi.spyOn(api, 'register').mockResolvedValue({ token });
+    jwtDecode.mockReturnValue(mockUser);
 
     const TestComponent = () => {
       const { user, register } = React.useContext(AuthContext);
@@ -146,6 +146,10 @@ describe('AuthContext', () => {
     const invalidToken = 'invalid.token.here';
     localStorage.setItem('authToken', invalidToken);
 
+    jwtDecode.mockImplementation(() => {
+      throw new Error('Failed to decode token');
+    });
+
     const TestComponent = () => {
       const { user, isCheckingAuth, authError } = React.useContext(AuthContext);
       return (
@@ -171,6 +175,7 @@ describe('AuthContext', () => {
   it('remains logged in after re-mount', () => {
     const token = jwt.sign({ name: 'Persistent User' }, 'testSecret');
     localStorage.setItem('authToken', token);
+    jwtDecode.mockReturnValue({ name: 'Persistent User' });
 
     const TestComponent = () => {
       const { user } = React.useContext(AuthContext);
@@ -197,7 +202,8 @@ describe('AuthContext', () => {
   });
 
   it('handles login API error', async () => {
-    vi.spyOn(api, 'login').mockRejectedValue(new Error('Login failed'));
+    const mockError = new Error('Login failed');
+    vi.spyOn(api, 'login').mockRejectedValueOnce(mockError);
 
     const TestComponent = () => {
       const { user, login, authError } = React.useContext(AuthContext);
@@ -205,7 +211,7 @@ describe('AuthContext', () => {
         <div>
           <div>user: {user ? user.name : 'No user'}</div>
           <button onClick={() => login({ username: 'test', password: 'test' })}>Login</button>
-          <div>{authError}</div>
+          {authError && <div>{authError}</div>}
         </div>
       );
     };
@@ -223,5 +229,8 @@ describe('AuthContext', () => {
       expect(screen.getByText(/Login failed/i)).toBeInTheDocument();
       expect(screen.getByText(/user: No user/i)).toBeInTheDocument();
     });
+
+    // Clear any possible unhandled rejections
+    vi.clearAllMocks();
   });
 });

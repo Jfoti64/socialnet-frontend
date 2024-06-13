@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import { useEffect, useState } from 'react';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
@@ -9,12 +8,15 @@ import { getFeedPosts, createPost } from '../api';
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
   const [showForm, setShowForm] = useState(false); // State to manage form visibility
+  const [error, setError] = useState(''); // State to manage errors
 
   const fetchPosts = async () => {
     try {
       const postsData = await getFeedPosts();
       setPosts(postsData);
+      setError(''); // Clear any previous errors
     } catch (error) {
+      setError('Error fetching posts');
       console.error('Error fetching posts:', error);
     }
   };
@@ -25,6 +27,7 @@ const Dashboard = () => {
       fetchPosts(); // Refresh posts after creating a new one
       setShowForm(false); // Hide form after post creation
     } catch (error) {
+      setError('Error creating post');
       console.error('Error creating post:', error);
     }
   };
@@ -45,6 +48,10 @@ const Dashboard = () => {
         />
         <div className="p-10 text-white overflow-auto">
           {showForm && <NewPostForm onCreatePost={handleCreatePost} />}
+          {error && (
+            <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
+          )}
+          {posts.length === 0 && !error && <div>Loading...</div>}
           {posts.map((post) => (
             <Post
               key={post._id}

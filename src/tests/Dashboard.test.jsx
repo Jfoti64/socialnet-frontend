@@ -148,4 +148,23 @@ describe('Dashboard', () => {
     });
     expect(screen.queryByPlaceholderText(/What's on your mind?/i)).not.toBeInTheDocument();
   });
+
+  it('displays an error message if fetching posts fails', async () => {
+    getFeedPosts.mockRejectedValueOnce(new Error('Failed to fetch posts'));
+
+    await act(async () => {
+      renderWithAuth(
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>,
+        {
+          providerProps: { value: { user: { id: '1', name: 'Test User' }, isCheckingAuth: false } },
+        }
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Error fetching posts')).toBeInTheDocument();
+    });
+  });
 });

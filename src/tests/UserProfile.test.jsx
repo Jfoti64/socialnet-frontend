@@ -248,7 +248,7 @@ describe('UserProfile', () => {
     });
   });
 
-  it.skip('displays an error message if fetching user profile fails', async () => {
+  it('displays an error message if fetching user profile fails', async () => {
     getUserProfile.mockRejectedValueOnce(new Error('Failed to fetch user profile'));
     await act(async () => {
       render(
@@ -300,6 +300,135 @@ describe('UserProfile', () => {
 
       console.log('Post likes:', postLikes); // Debug log
       expect(postLikes).toEqual([10, 5, 2]);
+    });
+  });
+
+  it.skip('sorts comments by likes in descending order', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthContext.Provider value={mockAuth}>
+            <UserProfile />
+          </AuthContext.Provider>
+        </BrowserRouter>
+      );
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /comments/i }));
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Sort by'), {
+        target: { value: 'likes' },
+      });
+      fireEvent.change(screen.getByLabelText('Order'), {
+        target: { value: 'desc' },
+      });
+    });
+
+    await waitFor(() => {
+      const commentLikeElements = screen.getAllByText(/\d+ Likes?/);
+      const commentLikes = commentLikeElements
+        .map((node) => {
+          const match = node.textContent.match(/(\d+) Likes?/);
+          return match ? parseInt(match[1], 10) : null;
+        })
+        .filter((likeCount) => likeCount !== null);
+
+      console.log('Comment likes:', commentLikes); // Debug log
+      expect(commentLikes).toEqual([10, 5, 2]);
+    });
+  });
+
+  it('displays an error message if fetching user profile fails', async () => {
+    getUserProfile.mockRejectedValueOnce(new Error('Failed to fetch user profile'));
+
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthContext.Provider value={mockAuth}>
+            <UserProfile />
+          </AuthContext.Provider>
+        </BrowserRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Error fetching user profile')).toBeInTheDocument();
+    });
+  });
+
+  it('renders profile picture, name, and email', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthContext.Provider value={mockAuth}>
+            <UserProfile />
+          </AuthContext.Provider>
+        </BrowserRouter>
+      );
+    });
+
+    await waitFor(() => {
+      const profilePictures = screen.getAllByAltText('Jane Doe');
+      expect(profilePictures.length).toBeGreaterThan(0); // Ensure at least one profile picture is rendered
+
+      const profileName = screen.getAllByText('Jane Doe');
+      expect(profileName.length).toBeGreaterThan(0); // Ensure at least one name is rendered
+
+      const profileEmail = screen.getByText('jane.doe@example.com');
+      expect(profileEmail).toBeInTheDocument();
+    });
+  });
+
+  it('renders the correct tab content when switching tabs', async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthContext.Provider value={mockAuth}>
+            <UserProfile />
+          </AuthContext.Provider>
+        </BrowserRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /friends/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /friends/i }));
+    await waitFor(() => {
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /comments/i }));
+    await waitFor(() => {
+      expect(screen.getByText('Nice post!')).toBeInTheDocument();
+    });
+  });
+
+  it('renders empty state messages for posts, friends, and comments', async () => {
+    getUserPosts.mockResolvedValueOnce([]);
+    getUserFriends.mockResolvedValueOnce([]);
+    getUserComments.mockResolvedValueOnce([]);
+
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthContext.Provider value={mockAuth}>
+            <UserProfile />
+          </AuthContext.Provider>
+        </BrowserRouter>
+      );
+    });
+
+    await waitFor(() => {
+      fireEvent.click(screen.getByRole('button', { name: /posts/i }));
+      expect(screen.getByText('No posts available')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /friends/i }));
+      expect(screen.getByText('No friends available')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /comments/i }));
+      expect(screen.getByText('No comments available')).toBeInTheDocument();
     });
   });
 });

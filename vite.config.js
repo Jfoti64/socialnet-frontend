@@ -10,6 +10,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8', // or 'c8'
       reporter: ['text', 'html'], // 'text' for console output, 'html' for HTML report
+      exclude: [
+        'postcss.config.js',
+        'tailwind.config.js',
+        'src/main.jsx',
+        'src/tests/**',
+        'src/setupTests.js',
+        'vite.config.js',
+      ],
     },
   },
   css: {

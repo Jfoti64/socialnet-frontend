@@ -7,6 +7,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 vi.mock('../api', () => ({
   getFriendRequests: vi.fn(),
   searchUsers: vi.fn(),
+  acceptFriendRequest: vi.fn(),
+  rejectFriendRequest: vi.fn(),
 }));
 
 describe('Header Component', () => {
@@ -19,6 +21,7 @@ describe('Header Component', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers(); // Restore real timers after each test
   });
 
   it('renders Header component', async () => {
@@ -76,6 +79,101 @@ describe('Header Component', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/John Doe/)).toBeInTheDocument();
+    });
+  });
+
+  it('shows notification when a friend request is accepted', async () => {
+    const friendRequests = [{ requester: { _id: '1', firstName: 'John', lastName: 'Doe' } }];
+    api.getFriendRequests.mockResolvedValue(friendRequests);
+    api.acceptFriendRequest.mockResolvedValue({});
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Notifications/i }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/John Doe/)).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Accept'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Friend request accepted/i)).toBeInTheDocument();
+    });
+  });
+
+  it('shows notification when a friend request is rejected', async () => {
+    const friendRequests = [{ requester: { _id: '1', firstName: 'John', lastName: 'Doe' } }];
+    api.getFriendRequests.mockResolvedValue(friendRequests);
+    api.rejectFriendRequest.mockResolvedValue({});
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Notifications/i }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/John Doe/)).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Decline'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Friend request rejected/i)).toBeInTheDocument();
+    });
+  });
+
+  it('toggles compose form visibility', async () => {
+    let showForm = false;
+    const toggleForm = () => {
+      showForm = !showForm;
+    };
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={showForm}
+          onComposeClick={toggleForm}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const composeButton = screen.getByText(/Compose/i);
+    fireEvent.click(composeButton);
+    await waitFor(() => {
+      expect(showForm).toBe(true);
+    });
+
+    fireEvent.click(composeButton);
+    await waitFor(() => {
+      expect(showForm).toBe(false);
     });
   });
 });

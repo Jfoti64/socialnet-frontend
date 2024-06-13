@@ -50,6 +50,7 @@ const UserProfile = () => {
           }
         } catch (error) {
           setError('Error fetching user profile');
+          setUserProfile(null); // Ensure userProfile is null when there's an error
           console.error('Error fetching user profile:', error);
         }
       };
@@ -76,17 +77,6 @@ const UserProfile = () => {
   const sortedPosts = userPosts ? sortItems(userPosts, sortCriteria, sortOrder) : [];
   const sortedComments = userComments ? sortItems(userComments, sortCriteria, sortOrder) : [];
 
-  if (isCheckingAuth || userProfile === null) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  const isUser = user.id === userId;
-  const isFriend = userProfile.friends.includes(user.id);
-
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
@@ -98,178 +88,184 @@ const UserProfile = () => {
           showComposeButton={false}
         />
         <div className="p-4 overflow-auto">
-          <div className="bg-gray-800 text-white p-4 rounded-md shadow-md">
-            <div className="flex items-center space-x-4">
-              <ProfilePicture
-                profilePicture={userProfile.profilePicture}
-                alt={`${userProfile.firstName} ${userProfile.lastName}`}
-              />
-              <div>
-                <h1 className="text-2xl font-semibold">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
-                <p className="text-gray-400">{userProfile.email}</p>
-              </div>
-            </div>
-          </div>
-          {(isUser || isFriend) && (
-            <div className="mt-4">
-              <div className="flex space-x-4">
-                <button
-                  className={`px-4 py-2 ${activeTab === 'posts' ? 'bg-indigo-600' : 'bg-gray-800'} text-white rounded-md`}
-                  onClick={() => setActiveTab('posts')}
-                >
-                  Posts
-                </button>
-                <button
-                  className={`px-4 py-2 ${activeTab === 'friends' ? 'bg-indigo-600' : 'bg-gray-800'} text-white rounded-md`}
-                  onClick={() => setActiveTab('friends')}
-                >
-                  Friends
-                </button>
-                <button
-                  className={`px-4 py-2 ${activeTab === 'comments' ? 'bg-indigo-600' : 'bg-gray-800'} text-white rounded-md`}
-                  onClick={() => setActiveTab('comments')}
-                >
-                  Comments
-                </button>
-              </div>
-              <div className="mt-4 flex space-x-4">
-                <label htmlFor="sortCriteria" className="sr-only">
-                  Sort by
-                </label>
-                <select
-                  id="sortCriteria"
-                  className="bg-gray-800 text-white rounded-md px-4 py-2"
-                  value={sortCriteria}
-                  onChange={(e) => setSortCriteria(e.target.value)}
-                >
-                  <option value="date">Date</option>
-                  <option value="likes">Likes</option>
-                </select>
-                <label htmlFor="sortOrder" className="sr-only">
-                  Order
-                </label>
-                <select
-                  id="sortOrder"
-                  className="bg-gray-800 text-white rounded-md px-4 py-2"
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                >
-                  <option value="asc">Ascending</option>
-                  <option value="desc">Descending</option>
-                </select>
+          {error && (
+            <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
+          )}
+          {!isCheckingAuth && !userProfile && !error && <div>Loading...</div>}
+          {userProfile && (
+            <div>
+              <div className="bg-gray-800 text-white p-4 rounded-md shadow-md">
+                <div className="flex items-center space-x-4">
+                  <ProfilePicture
+                    profilePicture={userProfile.profilePicture}
+                    alt={`${userProfile.firstName} ${userProfile.lastName}`}
+                  />
+                  <div>
+                    <h1 className="text-2xl font-semibold">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
+                    <p className="text-gray-400">{userProfile.email}</p>
+                  </div>
+                </div>
               </div>
               <div className="mt-4">
-                {activeTab === 'posts' && (
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">Posts</h2>
-                    <ul className="mt-2 space-y-2">
-                      {userPosts === null ? (
-                        <p className="text-gray-400">Loading...</p>
-                      ) : userPosts.length > 0 ? (
-                        sortedPosts.map((post) => (
-                          <li key={post._id} className="bg-gray-700 p-4 rounded-md">
-                            <div className="flex items-center space-x-4">
-                              <ProfilePicture
-                                profilePicture={userProfile.profilePicture}
-                                alt={`${userProfile.firstName} ${userProfile.lastName}`}
-                              />
-                              <div>
-                                <Link
-                                  to={`/profile/${userProfile._id}`}
-                                  className="text-white hover:underline"
-                                >
-                                  {`${userProfile.firstName} ${userProfile.lastName}`}
-                                </Link>
-                                <p className="text-gray-400 text-sm">
-                                  {new Date(post.createdAt).toLocaleString()}
-                                </p>
-                                <p className="text-gray-400 text-sm">
-                                  {post.likeCount} {post.likeCount === 1 ? 'Like' : 'Likes'}
-                                </p>
+                <div className="flex space-x-4">
+                  <button
+                    className={`px-4 py-2 ${activeTab === 'posts' ? 'bg-indigo-600' : 'bg-gray-800'} text-white rounded-md`}
+                    onClick={() => setActiveTab('posts')}
+                  >
+                    Posts
+                  </button>
+                  <button
+                    className={`px-4 py-2 ${activeTab === 'friends' ? 'bg-indigo-600' : 'bg-gray-800'} text-white rounded-md`}
+                    onClick={() => setActiveTab('friends')}
+                  >
+                    Friends
+                  </button>
+                  <button
+                    className={`px-4 py-2 ${activeTab === 'comments' ? 'bg-indigo-600' : 'bg-gray-800'} text-white rounded-md`}
+                    onClick={() => setActiveTab('comments')}
+                  >
+                    Comments
+                  </button>
+                </div>
+                <div className="mt-4 flex space-x-4">
+                  <label htmlFor="sortCriteria" className="sr-only">
+                    Sort by
+                  </label>
+                  <select
+                    id="sortCriteria"
+                    className="bg-gray-800 text-white rounded-md px-4 py-2"
+                    value={sortCriteria}
+                    onChange={(e) => setSortCriteria(e.target.value)}
+                  >
+                    <option value="date">Date</option>
+                    <option value="likes">Likes</option>
+                  </select>
+                  <label htmlFor="sortOrder" className="sr-only">
+                    Order
+                  </label>
+                  <select
+                    id="sortOrder"
+                    className="bg-gray-800 text-white rounded-md px-4 py-2"
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                  >
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                  </select>
+                </div>
+                <div className="mt-4">
+                  {activeTab === 'posts' && (
+                    <div>
+                      <h2 className="text-xl font-semibold text-white">Posts</h2>
+                      <ul className="mt-2 space-y-2">
+                        {userPosts === null ? (
+                          <p className="text-gray-400">Loading...</p>
+                        ) : userPosts.length > 0 ? (
+                          sortedPosts.map((post) => (
+                            <li key={post._id} className="bg-gray-700 p-4 rounded-md">
+                              <div className="flex items-center space-x-4">
+                                <ProfilePicture
+                                  profilePicture={userProfile.profilePicture}
+                                  alt={`${userProfile.firstName} ${userProfile.lastName}`}
+                                />
+                                <div>
+                                  <Link
+                                    to={`/profile/${userProfile._id}`}
+                                    className="text-white hover:underline"
+                                  >
+                                    {`${userProfile.firstName} ${userProfile.lastName}`}
+                                  </Link>
+                                  <p className="text-gray-400 text-sm">
+                                    {new Date(post.createdAt).toLocaleString()}
+                                  </p>
+                                  <p className="text-gray-400 text-sm">
+                                    {post.likeCount} {post.likeCount === 1 ? 'Like' : 'Likes'}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                            <Link to={`/post/${post._id}`}>
-                              <p className="mt-2 text-white hover:underline">{post.content}</p>
-                            </Link>
-                          </li>
-                        ))
-                      ) : (
-                        <p className="text-gray-400">No posts available</p>
-                      )}
-                    </ul>
-                  </div>
-                )}
-                {activeTab === 'friends' && (
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">Friends</h2>
-                    <ul className="mt-2 space-y-2">
-                      {userFriends === null ? (
-                        <p className="text-gray-400">Loading...</p>
-                      ) : userFriends.length > 0 ? (
-                        userFriends.map((friend) => (
-                          <li
-                            key={friend._id}
-                            className="bg-gray-700 p-4 rounded-md flex items-center space-x-4"
-                          >
-                            <ProfilePicture
-                              profilePicture={friend.profilePicture}
-                              alt={`${friend.firstName} ${friend.lastName}`}
-                            />
-                            <Link
-                              to={`/profile/${friend._id}`}
-                              className="text-white hover:underline"
+                              <Link to={`/post/${post._id}`}>
+                                <p className="mt-2 text-white hover:underline">{post.content}</p>
+                              </Link>
+                            </li>
+                          ))
+                        ) : (
+                          <p className="text-gray-400">No posts available</p>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {activeTab === 'friends' && (
+                    <div>
+                      <h2 className="text-xl font-semibold text-white">Friends</h2>
+                      <ul className="mt-2 space-y-2">
+                        {userFriends === null ? (
+                          <p className="text-gray-400">Loading...</p>
+                        ) : userFriends.length > 0 ? (
+                          userFriends.map((friend) => (
+                            <li
+                              key={friend._id}
+                              className="bg-gray-700 p-4 rounded-md flex items-center space-x-4"
                             >
-                              {`${friend.firstName} ${friend.lastName}`}
-                            </Link>
-                          </li>
-                        ))
-                      ) : (
-                        <p className="text-gray-400">No friends available</p>
-                      )}
-                    </ul>
-                  </div>
-                )}
-                {activeTab === 'comments' && (
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">Comments</h2>
-                    <ul className="mt-2 space-y-2">
-                      {userComments === null ? (
-                        <p className="text-gray-400">Loading...</p>
-                      ) : userComments.length > 0 ? (
-                        sortedComments.map((comment) => (
-                          <li key={comment._id} className="bg-gray-700 p-4 rounded-md">
-                            <div className="flex items-center space-x-4">
                               <ProfilePicture
-                                profilePicture={comment.author?.profilePicture}
-                                alt={`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                                profilePicture={friend.profilePicture}
+                                alt={`${friend.firstName} ${friend.lastName}`}
                               />
-                              <div>
-                                <Link
-                                  to={`/profile/${comment.author?._id || ''}`}
-                                  className="text-white hover:underline"
-                                >
-                                  {`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
-                                </Link>
-                                <p className="text-gray-400 text-sm">
-                                  {new Date(comment.createdAt).toLocaleString()}
-                                </p>
-                                <Link
-                                  to={`/post/${comment.post._id}`}
-                                  className="text-gray-400 text-sm hover:underline"
-                                >
-                                  View Post
-                                </Link>
+                              <Link
+                                to={`/profile/${friend._id}`}
+                                className="text-white hover:underline"
+                              >
+                                {`${friend.firstName} ${friend.lastName}`}
+                              </Link>
+                            </li>
+                          ))
+                        ) : (
+                          <p className="text-gray-400">No friends available</p>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {activeTab === 'comments' && (
+                    <div>
+                      <h2 className="text-xl font-semibold text-white">Comments</h2>
+                      <ul className="mt-2 space-y-2">
+                        {userComments === null ? (
+                          <p className="text-gray-400">Loading...</p>
+                        ) : userComments.length > 0 ? (
+                          sortedComments.map((comment) => (
+                            <li key={comment._id} className="bg-gray-700 p-4 rounded-md">
+                              <div className="flex items-center space-x-4">
+                                <ProfilePicture
+                                  profilePicture={comment.author?.profilePicture}
+                                  alt={`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                                />
+                                <div>
+                                  <Link
+                                    to={`/profile/${comment.author?._id || ''}`}
+                                    className="text-white hover:underline"
+                                  >
+                                    {`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                                  </Link>
+                                  <p className="text-gray-400 text-sm">
+                                    {new Date(comment.createdAt).toLocaleString()}
+                                  </p>
+                                  <Link
+                                    to={`/post/${comment.post._id}`}
+                                    className="text-gray-400 text-sm hover:underline"
+                                  >
+                                    View Post
+                                  </Link>
+                                </div>
                               </div>
-                            </div>
-                            <p className="mt-2 text-white">{comment.content}</p>
-                          </li>
-                        ))
-                      ) : (
-                        <p className="text-gray-400">No comments available</p>
-                      )}
-                    </ul>
-                  </div>
-                )}
+                              <p className="mt-2 text-white">{comment.content}</p>
+                            </li>
+                          ))
+                        ) : (
+                          <p className="text-gray-400">No comments available</p>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -20,6 +20,7 @@ const Header = ({
   const [notification, setNotification] = useState(null); // State for notification
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState(''); // Add error state
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
 
@@ -29,6 +30,7 @@ const Header = ({
         const requests = await getFriendRequests();
         setFriendRequests(requests);
       } catch (error) {
+        setError('Error fetching friend requests');
         console.error('Error fetching friend requests:', error);
       }
     };
@@ -98,6 +100,7 @@ const Header = ({
       const results = await searchUsers(e.target.value);
       setSearchResults(results);
     } catch (error) {
+      setError('Error searching users');
       console.error('Error searching users:', error);
     }
   };
@@ -143,6 +146,7 @@ const Header = ({
             </ul>
           </div>
         )}
+        {error && <div className="text-red-500 mt-2">{error}</div>}
       </div>
       <div className="relative flex items-center space-x-4">
         <button

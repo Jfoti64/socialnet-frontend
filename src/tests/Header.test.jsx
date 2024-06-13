@@ -176,4 +176,104 @@ describe('Header Component', () => {
       expect(showForm).toBe(false);
     });
   });
+
+  it('closes notifications dropdown when clicking outside', async () => {
+    const friendRequests = [{ requester: { _id: '1', firstName: 'John', lastName: 'Doe' } }];
+    api.getFriendRequests.mockResolvedValue(friendRequests);
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const bellButton = screen.getByRole('button', { name: /Notifications/i });
+    await act(async () => {
+      fireEvent.click(bellButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
+    });
+
+    fireEvent.mouseDown(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/John Doe/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('displays search results and navigates correctly', async () => {
+    const searchResults = [
+      {
+        _id: '1',
+        firstName: 'Jane',
+        lastName: 'Doe',
+        profilePicture: '',
+        email: 'jane@example.com',
+      },
+    ];
+    api.searchUsers.mockResolvedValue(searchResults);
+
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { href: '' },
+    });
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const searchInput = screen.getByPlaceholderText(/Search Users.../i);
+    fireEvent.change(searchInput, { target: { value: 'Jane' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Jane Doe/i)).toBeInTheDocument();
+      expect(screen.getByText(/jane@example.com/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText(/Jane Doe/i));
+    expect(window.location.href).toBe('/profile/1');
+  });
+
+  it('handles API errors gracefully', async () => {
+    api.getFriendRequests.mockRejectedValue(new Error('API Error'));
+    api.searchUsers.mockRejectedValue(new Error('API Error'));
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    // Verify error handling for friend requests
+    await waitFor(() => {
+      expect(screen.getByText(/Error fetching friend requests/i)).toBeInTheDocument();
+    });
+
+    // Verify error handling for search users
+    const searchInput = screen.getByPlaceholderText(/Search Users.../i);
+    fireEvent.change(searchInput, { target: { value: 'Error' } });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Error searching users/i)).toBeInTheDocument();
+    });
+  });
 });

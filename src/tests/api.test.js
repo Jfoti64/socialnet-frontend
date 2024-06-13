@@ -269,4 +269,56 @@ describe('API functions', () => {
     expect(response).toEqual(mockData);
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/posts/feed');
   });
+
+  it('should handle invalid login credentials', async () => {
+    const mockError = { response: { data: { message: 'Invalid credentials' } } };
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    try {
+      await api.login({ username: 'wrong', password: 'wrong' });
+    } catch (error) {
+      expect(error.response.data.message).toBe('Invalid credentials');
+    }
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/auth/login', {
+      username: 'wrong',
+      password: 'wrong',
+    });
+  });
+
+  it('should handle creating a post without content', async () => {
+    const mockError = { response: { data: { message: 'Content is required' } } };
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    try {
+      await api.createPost({});
+    } catch (error) {
+      expect(error.response.data.message).toBe('Content is required');
+    }
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/posts', {});
+  });
+
+  it('should handle non-existent user profile', async () => {
+    const mockError = { response: { data: { message: 'User not found' } } };
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    try {
+      await api.getUserProfile('nonexistent');
+    } catch (error) {
+      expect(error.response.data.message).toBe('User not found');
+    }
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/users/profile/nonexistent');
+  });
+
+  it('should handle empty search term', async () => {
+    const mockData = []; // Expected response for an empty search term
+    mockAxiosInstance.get.mockResolvedValue({ data: mockData });
+
+    const response = await api.searchUsers('');
+
+    expect(response).toEqual(mockData);
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/users/search?q=');
+  });
 });

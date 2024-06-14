@@ -14,7 +14,7 @@ const ProtectedRoute = ({ element: Element, ...rest }) => {
     return <Navigate to="/login" />;
   }
 
-  return user ? <Element {...rest} /> : <Navigate to="/login" />;
+  return <Element {...rest} />;
 };
 
 ProtectedRoute.propTypes = {

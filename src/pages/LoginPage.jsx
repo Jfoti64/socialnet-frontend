@@ -31,8 +31,12 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 px-6 py-12 lg:px-8">
-      {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-      <LoginForm onSubmit={handleLogin} />
+      <div className="max-w-md w-full space-y-8">
+        {error && (
+          <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
+        )}
+        <LoginForm onSubmit={handleLogin} />
+      </div>
     </div>
   );
 };

@@ -289,7 +289,6 @@ describe('UserProfile', () => {
     // Check if the posts are sorted by likes in descending order
     await waitFor(() => {
       const postLikeElements = screen.getAllByText(/\d+ Likes?/);
-      postLikeElements.forEach((el) => console.log(el.textContent)); // Log the text content of each element
 
       const postLikes = postLikeElements
         .map((node) => {
@@ -298,7 +297,6 @@ describe('UserProfile', () => {
         })
         .filter((likeCount) => likeCount !== null);
 
-      console.log('Post likes:', postLikes); // Debug log
       expect(postLikes).toEqual([10, 5, 2]);
     });
   });
@@ -333,7 +331,6 @@ describe('UserProfile', () => {
         })
         .filter((likeCount) => likeCount !== null);
 
-      console.log('Comment likes:', commentLikes); // Debug log
       expect(commentLikes).toEqual([10, 5, 2]);
     });
   });

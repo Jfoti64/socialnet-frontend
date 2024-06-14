@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act, cleanup } from '@testing-library/react';
 import Header from '../components/common/Header';
 import * as api from '../api';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
@@ -275,5 +275,195 @@ describe('Header Component', () => {
     await waitFor(() => {
       expect(screen.queryByText(/Error searching users/i)).toBeInTheDocument();
     });
+  });
+
+  it('clears search results when search input is cleared', async () => {
+    const searchResults = [
+      {
+        _id: '1',
+        firstName: 'Jane',
+        lastName: 'Doe',
+        profilePicture: '',
+        email: 'jane@example.com',
+      },
+    ];
+    api.searchUsers.mockResolvedValue(searchResults);
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const searchInput = screen.getByPlaceholderText(/Search Users.../i);
+    fireEvent.change(searchInput, { target: { value: 'Jane' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Jane Doe/i)).toBeInTheDocument();
+    });
+
+    fireEvent.change(searchInput, { target: { value: '' } });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Jane Doe/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('handles search input with special characters', async () => {
+    const searchResults = [
+      {
+        _id: '1',
+        firstName: 'Jane',
+        lastName: 'Doe',
+        profilePicture: '',
+        email: 'jane@example.com',
+      },
+    ];
+    api.searchUsers.mockResolvedValue(searchResults);
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const searchInput = screen.getByPlaceholderText(/Search Users.../i);
+    fireEvent.change(searchInput, { target: { value: '@Jane!' } });
+
+    await waitFor(() => {
+      expect(api.searchUsers).toHaveBeenCalledWith('@Jane!');
+      expect(screen.getByText(/Jane Doe/i)).toBeInTheDocument();
+    });
+  });
+
+  it('displays loading state while fetching friend requests', async () => {
+    api.getFriendRequests.mockImplementation(() => new Promise(() => {})); // Never resolves
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    await waitFor(() => {
+      fireEvent.click(screen.getByRole('button', { name: /Notifications/i }));
+      expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+    });
+  });
+
+  it('displays loading state while searching users', async () => {
+    api.searchUsers.mockImplementation(() => new Promise(() => {})); // Never resolves
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const searchInput = screen.getByPlaceholderText(/Search Users.../i);
+    fireEvent.change(searchInput, { target: { value: 'Jane' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+    });
+  });
+
+  it('handles no search results gracefully', async () => {
+    api.searchUsers.mockResolvedValue([]);
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const searchInput = screen.getByPlaceholderText(/Search Users.../i);
+    fireEvent.change(searchInput, { target: { value: 'NoMatch' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/No users found/i)).toBeInTheDocument();
+    });
+  });
+
+  it('handles a large number of search results', async () => {
+    const searchResults = Array.from({ length: 100 }, (_, index) => ({
+      _id: index.toString(),
+      firstName: `User${index}`,
+      lastName: 'Test',
+      profilePicture: '',
+      email: `user${index}@example.com`,
+    }));
+    api.searchUsers.mockResolvedValue(searchResults);
+
+    await act(async () => {
+      render(
+        <Header
+          showForm={false}
+          onComposeClick={() => {}}
+          refreshPosts={refreshPosts}
+          showComposeButton={true}
+        />
+      );
+    });
+
+    const searchInput = screen.getByPlaceholderText(/Search Users.../i);
+    fireEvent.change(searchInput, { target: { value: 'User' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/User0 Test/i)).toBeInTheDocument();
+      expect(screen.getByText(/User99 Test/i)).toBeInTheDocument();
+    });
+  });
+
+  it('cleans up event listeners and timeouts after each test', async () => {
+    const spyAddEventListener = vi.spyOn(document, 'addEventListener');
+    const spyRemoveEventListener = vi.spyOn(document, 'removeEventListener');
+
+    const { unmount } = render(
+      <Header
+        showForm={false}
+        onComposeClick={() => {}}
+        refreshPosts={refreshPosts}
+        showComposeButton={true}
+      />
+    );
+
+    // Ensure the event listener is added
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /Notifications/i }));
+    });
+
+    expect(spyAddEventListener).toHaveBeenCalledWith('mousedown', expect.any(Function));
+
+    // Unmount the component to trigger cleanup
+    unmount();
+
+    // Ensure the event listener is removed
+    expect(spyRemoveEventListener).toHaveBeenCalledWith('mousedown', expect.any(Function));
   });
 });

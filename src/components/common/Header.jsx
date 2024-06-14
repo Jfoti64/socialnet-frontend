@@ -21,17 +21,22 @@ const Header = ({
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(''); // Add error state
+  const [loading, setLoading] = useState(false); // Loading state for friend requests
+  const [searchLoading, setSearchLoading] = useState(false); // Loading state for search
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
 
   useEffect(() => {
     const fetchFriendRequests = async () => {
+      setLoading(true);
       try {
         const requests = await getFriendRequests();
         setFriendRequests(requests);
       } catch (error) {
         setError('Error fetching friend requests');
         console.error('Error fetching friend requests:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -96,12 +101,15 @@ const Header = ({
       return;
     }
 
+    setSearchLoading(true);
     try {
       const results = await searchUsers(e.target.value);
       setSearchResults(results);
     } catch (error) {
       setError('Error searching users');
       console.error('Error searching users:', error);
+    } finally {
+      setSearchLoading(false);
     }
   };
 
@@ -119,6 +127,7 @@ const Header = ({
           value={searchTerm}
           onChange={handleSearch}
         />
+        {searchLoading && <div className="text-white mt-2">Loading...</div>}
         {searchResults.length > 0 && (
           <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50">
             <ul className="max-h-60 overflow-y-auto">
@@ -145,6 +154,9 @@ const Header = ({
               ))}
             </ul>
           </div>
+        )}
+        {searchResults.length === 0 && searchTerm && !searchLoading && (
+          <div className="text-white mt-2">No users found</div>
         )}
         {error && <div className="text-red-500 mt-2">{error}</div>}
       </div>
@@ -178,7 +190,9 @@ const Header = ({
           >
             <div className="p-4">
               <h4 className="text-lg font-semibold">Friend Requests</h4>
-              {friendRequests.length === 0 ? (
+              {loading ? (
+                <div className="text-white mt-2">Loading...</div>
+              ) : friendRequests.length === 0 ? (
                 <div className="mt-2 text-gray-400">No friend requests</div>
               ) : (
                 <ul className="mt-2 space-y-2 max-h-60 overflow-y-auto">

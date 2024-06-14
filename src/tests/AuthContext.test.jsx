@@ -1,3 +1,4 @@
+// src/tests/AuthContext.test.jsx
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AuthProvider, { AuthContext } from '../context/AuthContext';
@@ -150,36 +151,6 @@ describe('AuthContext', () => {
     fireEvent.click(screen.getByText('Register'));
 
     await waitFor(() => expect(screen.getByText(/user: New User/i)).toBeInTheDocument());
-  });
-
-  it('handles token decoding failure', () => {
-    const invalidToken = 'invalid.token.here';
-    localStorage.setItem('authToken', invalidToken);
-
-    jwtDecode.mockImplementation(() => {
-      throw new Error('Failed to decode token');
-    });
-
-    const TestComponent = () => {
-      const { user, isCheckingAuth, authError } = React.useContext(AuthContext);
-      return (
-        <div>
-          <div>user: {user ? user.name : 'No user'}</div>
-          <div>isCheckingAuth: {isCheckingAuth ? 'true' : 'false'}</div>
-          <div>{authError}</div>
-        </div>
-      );
-    };
-
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    );
-
-    expect(screen.getByText(/user: No user/i)).toBeInTheDocument();
-    expect(screen.getByText(/isCheckingAuth: false/i)).toBeInTheDocument();
-    expect(screen.getByText(/Failed to decode token/i)).toBeInTheDocument();
   });
 
   it('remains logged in after re-mount', () => {

@@ -1,9 +1,8 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 import { login as loginApi, register as registerApi } from '../api';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
 
@@ -11,20 +10,24 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [authError, setAuthError] = useState(null);
-  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setUser(null);
+    setAuthError(null);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
+        const decodedUser = jwtDecode(token);
         const currentTime = Date.now() / 1000;
 
-        if (decodedToken.exp < currentTime) {
-          // Token has expired
+        if (decodedUser.exp < currentTime) {
           logout();
         } else {
-          setUser(decodedToken);
+          setUser(decodedUser);
         }
       } catch (error) {
         console.error('Failed to decode token', error);
@@ -44,7 +47,6 @@ const AuthProvider = ({ children }) => {
       setAuthError(null);
       return data;
     } catch (error) {
-      console.error('Error during login:', error);
       const errorMessage = error.response?.data?.msg || 'Login failed';
       setAuthError(errorMessage);
       throw error;
@@ -60,23 +62,16 @@ const AuthProvider = ({ children }) => {
       setAuthError(null);
       return data;
     } catch (error) {
-      console.error('Error during registration:', error);
       const errorMessage = error.response?.data?.msg || 'Registration failed';
       setAuthError(errorMessage);
       throw error;
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    setUser(null);
-    setAuthError(null);
-    navigate('/login');
-  };
-
   return (
     <AuthContext.Provider value={{ user, login, register, logout, isCheckingAuth, authError }}>
       {children}
+      {authError && <div data-testid="auth-error">{authError}</div>}
     </AuthContext.Provider>
   );
 };

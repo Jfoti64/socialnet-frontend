@@ -1,3 +1,4 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { login as loginApi, register as registerApi } from '../api';
@@ -31,8 +32,12 @@ const AuthProvider = ({ children }) => {
       const decodedUser = jwtDecode(data.token);
       setUser(decodedUser);
       setAuthError(null);
+      return data;
     } catch (error) {
-      setAuthError('Login failed');
+      console.error('Error during login:', error); // Log the full error for debugging
+      const errorMessage = error.response?.data?.msg || 'Login failed';
+      setAuthError(errorMessage);
+      throw error; // Propagate the full error
     }
   };
 
@@ -43,8 +48,12 @@ const AuthProvider = ({ children }) => {
       const decodedUser = jwtDecode(data.token);
       setUser(decodedUser);
       setAuthError(null);
+      return data;
     } catch (error) {
-      setAuthError('Registration failed');
+      console.error('Error during registration:', error); // Log the full error for debugging
+      const errorMessage = error.response?.data?.msg || 'Registration failed';
+      setAuthError(errorMessage);
+      throw error; // Propagate the full error
     }
   };
 

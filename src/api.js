@@ -18,15 +18,21 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Authentication APIs
 export const login = async (credentials) => {
-  const response = await api.post('/auth/login', credentials);
-  return response.data;
+  try {
+    const response = await api.post('/auth/login', credentials);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error('Login failed in API:', error.response); // Log the error response
+      throw error; // Propagate the full error response
+    }
+    throw error; // Propagate the full error
+  }
 };
 
 export const register = async (userInfo) => {
@@ -113,5 +119,3 @@ export const getUserComments = async (userId) => {
   const response = await api.get(`/users/profile/${userId}/comments`);
   return response.data;
 };
-
-// Other APIs (posts, users, etc.) can be added here similarly

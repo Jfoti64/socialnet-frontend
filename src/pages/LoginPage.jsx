@@ -14,8 +14,18 @@ const LoginPage = () => {
       await login(data);
       navigate('/'); // Redirect to home page or dashboard after successful login
     } catch (err) {
-      console.error('Login failed:', err);
-      setError('Login failed'); // Set error message
+      console.error('Login error:', err); // Log the full error for debugging
+      if (err.response) {
+        console.error('Login error response:', err.response); // Log the error response for debugging
+        if (err.response.status === 401 || err.response.status === 400) {
+          setError('Incorrect username or password');
+        } else {
+          setError('Login failed');
+        }
+      } else {
+        console.error('Unexpected error:', err); // Log unexpected errors
+        setError('Login failed');
+      }
     }
   };
 

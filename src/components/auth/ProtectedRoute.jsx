@@ -10,6 +10,10 @@ const ProtectedRoute = ({ element: Element, ...rest }) => {
     return <div>Loading...</div>;
   }
 
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
   return user ? <Element {...rest} /> : <Navigate to="/login" />;
 };
 

@@ -17,9 +17,9 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/auth/success" element={<AuthSuccess />} />
-          <Route path="/profile/:userId" element={<UserProfile />} />
+          <Route path="/profile/:userId" element={<ProtectedRoute element={UserProfile} />} />
           <Route path="/" element={<ProtectedRoute element={Dashboard} />} />
-          <Route path="/post/:postId" element={<PostPage />} />
+          <Route path="/post/:postId" element={<ProtectedRoute element={PostPage} />} />
         </Routes>
       </AuthProvider>
     </Router>

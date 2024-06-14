@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, act, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import Header from '../components/common/Header';
 import * as api from '../api';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
@@ -264,6 +264,8 @@ describe('Header Component', () => {
     });
 
     // Verify error handling for friend requests
+    fireEvent.click(screen.getByLabelText(/Notifications/i));
+
     await waitFor(() => {
       expect(screen.getByText(/Error fetching friend requests/i)).toBeInTheDocument();
     });
@@ -273,7 +275,7 @@ describe('Header Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Error' } });
 
     await waitFor(() => {
-      expect(screen.queryByText(/Error searching users/i)).toBeInTheDocument();
+      expect(screen.getByText(/Error searching users/i)).toBeInTheDocument();
     });
   });
 

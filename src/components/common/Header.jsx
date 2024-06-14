@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BellIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { BellIcon, PencilSquareIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import PropTypes from 'prop-types';
 import {
   getFriendRequests,
@@ -127,7 +127,6 @@ const Header = ({
           value={searchTerm}
           onChange={handleSearch}
         />
-        {searchLoading && <div className="text-white mt-2">Loading...</div>}
         {searchResults.length > 0 && (
           <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50">
             <ul className="max-h-60 overflow-y-auto">
@@ -155,10 +154,16 @@ const Header = ({
             </ul>
           </div>
         )}
-        {searchResults.length === 0 && searchTerm && !searchLoading && (
-          <div className="text-white mt-2">No users found</div>
+        {searchTerm && searchResults.length === 0 && !searchLoading && (
+          <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50 p-4">
+            No users found
+          </div>
         )}
-        {error && <div className="text-red-500 mt-2">{error}</div>}
+        {searchLoading && (
+          <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50 p-4">
+            Loading...
+          </div>
+        )}
       </div>
       <div className="relative flex items-center space-x-4">
         <button
@@ -172,6 +177,9 @@ const Header = ({
             <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
               {friendRequests.length}
             </span>
+          )}
+          {error && (
+            <ExclamationCircleIcon className="w-6 h-6 text-red-500 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2" />
           )}
         </button>
         {showComposeButton && (
@@ -217,6 +225,7 @@ const Header = ({
                   ))}
                 </ul>
               )}
+              {error && <div className="mt-2 text-red-500">{error}</div>}
             </div>
           </div>
         )}

@@ -1,17 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import {
-  getUserProfile,
-  getUserPosts,
-  getUserFriends,
-  getUserComments,
-  getPost,
-  sendFriendRequest,
-} from '../api';
+import { getUserProfile, getUserPosts, getUserFriends, getUserComments, getPost } from '../api';
 import ProfilePicture from '../components/common/ProfilePicture';
 import { useAuth } from '../hooks/useAuth';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
+import SendFriendRequestButton from '../components/common/SendFriendRequestButton';
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -23,7 +17,6 @@ const UserProfile = () => {
   const [sortCriteria, setSortCriteria] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
   const [error, setError] = useState('');
-  const [friendRequestStatus, setFriendRequestStatus] = useState(null); // State for friend request status
   const { user, isCheckingAuth } = useAuth();
 
   useEffect(() => {
@@ -66,16 +59,6 @@ const UserProfile = () => {
       fetchUserProfile();
     }
   }, [userId, user, isCheckingAuth]);
-
-  const handleSendFriendRequest = async () => {
-    try {
-      await sendFriendRequest(userId);
-      setFriendRequestStatus('Request Sent');
-    } catch (error) {
-      setError('Error sending friend request');
-      console.error('Error sending friend request:', error);
-    }
-  };
 
   const sortItems = (items, criteria, order) => {
     return items.slice().sort((a, b) => {
@@ -127,16 +110,7 @@ const UserProfile = () => {
               {user.id !== userId && !userProfile.friends.includes(user.id) ? (
                 <div className="mt-4 bg-gray-700 text-white p-4 rounded-md shadow-md">
                   <p>You must be friends with this user to view their profile details.</p>
-                  {friendRequestStatus ? (
-                    <p className="mt-2 text-green-500">{friendRequestStatus}</p>
-                  ) : (
-                    <button
-                      onClick={handleSendFriendRequest}
-                      className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500"
-                    >
-                      Send Friend Request
-                    </button>
-                  )}
+                  <SendFriendRequestButton recipientId={userId} />
                 </div>
               ) : (
                 <div className="mt-4">
@@ -275,14 +249,18 @@ const UserProfile = () => {
                                 <div className="flex items-center space-x-4">
                                   <ProfilePicture
                                     profilePicture={comment.author?.profilePicture}
-                                    alt={`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                                    alt={`${comment.author?.firstName || 'N/A'} ${
+                                      comment.author?.lastName || 'N/A'
+                                    }`}
                                   />
                                   <div>
                                     <Link
                                       to={`/profile/${comment.author?._id || ''}`}
                                       className="text-white hover:underline"
                                     >
-                                      {`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                                      {`${comment.author?.firstName || 'N/A'} ${
+                                        comment.author?.lastName || 'N/A'
+                                      }`}
                                     </Link>
                                     <p className="text-gray-400 text-sm">
                                       {new Date(comment.createdAt).toLocaleString()}

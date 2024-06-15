@@ -1,22 +1,54 @@
-// src/components/auth/LoginForm.jsx
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email format').required('Email is required'),
   password: yup.string().required('Password is required'),
 });
 
-const LoginForm = ({ onSubmit }) => {
+const LoginForm = ({ onSubmit, onDemoLogin }) => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const [isTypingDemo, setIsTypingDemo] = useState(false);
+
+  const typeDemoCredentials = async () => {
+    const demoEmail = 'johndoe@example.com';
+    const demoPassword = '123456';
+    setIsTypingDemo(true);
+
+    for (let i = 0; i <= demoEmail.length; i++) {
+      setTimeout(() => {
+        setValue('email', demoEmail.slice(0, i));
+      }, i * 100); // Adjust the speed as needed
+    }
+
+    for (let i = 0; i <= demoPassword.length; i++) {
+      setTimeout(
+        () => {
+          setValue('password', demoPassword.slice(0, i));
+        },
+        (demoEmail.length + i) * 100
+      ); // Adjust the speed as needed
+    }
+
+    setTimeout(
+      () => {
+        onDemoLogin();
+        setIsTypingDemo(false);
+      },
+      (demoEmail.length + demoPassword.length + 1) * 100
+    );
+  };
 
   const handleFormSubmit = (data) => {
     onSubmit(data);
@@ -43,6 +75,7 @@ const LoginForm = ({ onSubmit }) => {
                 type="email"
                 {...register('email')}
                 className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 bg-gray-800 focus:bg-gray-800 sm:text-sm sm:leading-6"
+                disabled={isTypingDemo}
               />
               {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
             </div>
@@ -59,6 +92,7 @@ const LoginForm = ({ onSubmit }) => {
                 type="password"
                 {...register('password')}
                 className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 bg-gray-800 focus:bg-gray-800 sm:text-sm sm:leading-6"
+                disabled={isTypingDemo}
               />
               {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
             </div>
@@ -68,11 +102,22 @@ const LoginForm = ({ onSubmit }) => {
             <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              disabled={isTypingDemo}
             >
               Log in
             </button>
           </div>
         </form>
+
+        <div className="mt-4 flex flex-col items-center">
+          <button
+            onClick={typeDemoCredentials}
+            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-2"
+            disabled={isTypingDemo}
+          >
+            Login as Demo User
+          </button>
+        </div>
 
         <div className="relative mt-6">
           <div className="absolute inset-0 flex items-center">
@@ -127,6 +172,7 @@ const LoginForm = ({ onSubmit }) => {
 
 LoginForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  onDemoLogin: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

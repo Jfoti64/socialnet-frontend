@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -34,13 +33,21 @@ const LoginPage = () => {
     }
   };
 
+  const handleDemoLogin = () => {
+    handleLogin({ email: 'johndoe@example.com', password: '123456' });
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 px-6 py-12 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {error && (
           <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
         )}
-        {loading ? <LoadingSpinner loading={loading} /> : <LoginForm onSubmit={handleLogin} />}
+        {loading ? (
+          <LoadingSpinner loading={loading} />
+        ) : (
+          <LoginForm onSubmit={handleLogin} onDemoLogin={handleDemoLogin} />
+        )}
       </div>
     </div>
   );

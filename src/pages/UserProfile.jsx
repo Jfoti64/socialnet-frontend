@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
 import SendFriendRequestButton from '../components/common/SendFriendRequestButton';
+import { ClipLoader } from 'react-spinners';
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -18,10 +19,12 @@ const UserProfile = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [error, setError] = useState('');
   const { user, isCheckingAuth } = useAuth();
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     if (!isCheckingAuth && user) {
       const fetchUserProfile = async () => {
+        setLoading(true);
         try {
           const profile = await getUserProfile(userId);
           setUserProfile(profile);
@@ -52,6 +55,8 @@ const UserProfile = () => {
           setError('Error fetching user profile');
           setUserProfile(null);
           console.error('Error fetching user profile:', error);
+        } finally {
+          setLoading(false); // Set loading to false after data is fetched
         }
       };
 
@@ -76,6 +81,14 @@ const UserProfile = () => {
 
   const sortedPosts = userPosts ? sortItems(userPosts, sortCriteria, sortOrder) : [];
   const sortedComments = userComments ? sortItems(userComments, sortCriteria, sortOrder) : [];
+
+  if (loading) {
+    return (
+      <div className="flex h-screen justify-center items-center bg-gray-900">
+        <ClipLoader color={'#3949AB'} loading={loading} size={50} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-900 text-white">

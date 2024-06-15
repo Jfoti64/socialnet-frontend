@@ -6,6 +6,7 @@ import Sidebar from '../components/common/Sidebar';
 import Header from '../components/common/Header';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+import { ClipLoader } from 'react-spinners';
 
 const PostPage = () => {
   const { postId } = useParams();
@@ -13,6 +14,7 @@ const PostPage = () => {
   const [comments, setComments] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(0);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const fetchPostAndComments = async () => {
@@ -25,6 +27,8 @@ const PostPage = () => {
         setLikes(postData.likes.length);
       } catch (error) {
         console.error('Error fetching post or comments:', error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -41,8 +45,12 @@ const PostPage = () => {
     }
   };
 
-  if (!post) {
-    return <div className="flex h-screen justify-center items-center text-white">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex h-screen justify-center items-center bg-gray-900">
+        <ClipLoader color={'#3949AB'} loading={loading} size={50} />
+      </div>
+    );
   }
 
   return (

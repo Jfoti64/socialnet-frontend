@@ -4,13 +4,16 @@ import Header from '../components/common/Header';
 import Post from '../components/post/Post';
 import NewPostForm from '../components/post/NewPostForm';
 import { getFeedPosts, createPost } from '../api';
+import { ClipLoader } from 'react-spinners';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true); // Add loading state
 
   const fetchPosts = async () => {
+    setLoading(true);
     try {
       const postsData = await getFeedPosts();
       setPosts(postsData);
@@ -18,6 +21,8 @@ const Dashboard = () => {
     } catch (error) {
       setError('Error fetching posts');
       console.error('Error fetching posts:', error);
+    } finally {
+      setLoading(false); // Set loading to false after data is fetched
     }
   };
 
@@ -35,6 +40,14 @@ const Dashboard = () => {
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen justify-center items-center bg-gray-900">
+        <ClipLoader color={'#3949AB'} loading={loading} size={50} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">

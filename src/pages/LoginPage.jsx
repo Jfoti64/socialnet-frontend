@@ -3,13 +3,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import LoginForm from '../components/auth/LoginForm';
+import { ClipLoader } from 'react-spinners';
 
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (data) => {
+    setLoading(true);
     try {
       await login(data);
       navigate('/'); // Redirect to home page or dashboard after successful login
@@ -26,6 +29,8 @@ const LoginPage = () => {
         console.error('Unexpected error:', err); // Log unexpected errors
         setError('Login failed');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,7 +40,13 @@ const LoginPage = () => {
         {error && (
           <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
         )}
-        <LoginForm onSubmit={handleLogin} />
+        {loading ? (
+          <div className="flex justify-center bg-gray-900">
+            <ClipLoader color={'#3949AB'} loading={loading} size={50} />
+          </div>
+        ) : (
+          <LoginForm onSubmit={handleLogin} />
+        )}
       </div>
     </div>
   );

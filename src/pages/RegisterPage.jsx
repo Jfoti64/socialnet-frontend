@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import RegisterForm from '../components/auth/RegisterForm';
-import { ClipLoader } from 'react-spinners';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const RegisterPage = () => {
   const { register } = useAuth();
@@ -39,9 +39,7 @@ const RegisterPage = () => {
           <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{errorMessage}</div>
         )}
         {loading ? (
-          <div className="flex justify-center bg-gray-900">
-            <ClipLoader color={'#3949AB'} loading={loading} size={50} />
-          </div>
+          <LoadingSpinner loading={loading} />
         ) : (
           <RegisterForm onSubmit={handleRegister} />
         )}

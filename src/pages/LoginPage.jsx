@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import LoginForm from '../components/auth/LoginForm';
-import { ClipLoader } from 'react-spinners';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -40,13 +40,7 @@ const LoginPage = () => {
         {error && (
           <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
         )}
-        {loading ? (
-          <div className="flex justify-center bg-gray-900">
-            <ClipLoader color={'#3949AB'} loading={loading} size={50} />
-          </div>
-        ) : (
-          <LoginForm onSubmit={handleLogin} />
-        )}
+        {loading ? <LoadingSpinner loading={loading} /> : <LoginForm onSubmit={handleLogin} />}
       </div>
     </div>
   );

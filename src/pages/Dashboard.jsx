@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 import Post from '../components/post/Post';
 import NewPostForm from '../components/post/NewPostForm';
 import Header from '../components/common/Header';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import { getFeedPosts, createPost } from '../api';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const fetchPosts = async () => {
     try {
@@ -18,6 +20,8 @@ const Dashboard = () => {
     } catch (error) {
       setError('Error fetching posts');
       console.error('Error fetching posts:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,19 +55,24 @@ const Dashboard = () => {
             {error && (
               <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
             )}
-            {posts.length === 0 && !error && <div>Loading...</div>}
-            {posts.map((post) => (
-              <Post
-                key={post._id}
-                author={post.author}
-                content={post.content}
-                createdAt={post.createdAt}
-                profilePicture={post.author.profilePicture}
-                postId={post._id}
-                likeCount={post.likes.length}
-                initialIsLiked={post.isLiked}
-              />
-            ))}
+            {loading ? (
+              <LoadingSpinner loading={loading} />
+            ) : posts.length === 0 ? (
+              <div className="text-center text-gray-500">No posts available</div>
+            ) : (
+              posts.map((post) => (
+                <Post
+                  key={post._id}
+                  author={post.author}
+                  content={post.content}
+                  createdAt={post.createdAt}
+                  profilePicture={post.author.profilePicture}
+                  postId={post._id}
+                  likeCount={post.likes.length}
+                  initialIsLiked={post.isLiked}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

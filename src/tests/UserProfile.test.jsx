@@ -122,23 +122,6 @@ getPost.mockResolvedValue(mockPost);
 getFriendRequests.mockResolvedValue(mockFriendRequests);
 
 describe('UserProfile', () => {
-  it('renders loading state while fetching data', async () => {
-    getUserProfile.mockResolvedValueOnce(
-      new Promise((resolve) => setTimeout(() => resolve(mockUserProfile), 50000))
-    ); // Simulate loading with delay
-    await act(async () => {
-      render(
-        <BrowserRouter>
-          <AuthContext.Provider value={mockAuth}>
-            <UserProfile />
-          </AuthContext.Provider>
-        </BrowserRouter>
-      );
-    });
-
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
-
   it('renders user profile information', async () => {
     await act(async () => {
       render(

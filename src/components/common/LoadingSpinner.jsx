@@ -1,9 +1,14 @@
-import React from 'react';
+// src/components/common/LoadingSpinner.jsx
+import { ClipLoader } from 'react-spinners';
 
-const LoadingSpinner = () => {
+const LoadingSpinner = ({ loading }) => {
+  if (!loading) return null;
+
   return (
-    <div className="flex justify-center items-center">
-      <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+    <div className="flex justify-center items-center bg-gray-900 h-screen">
+      <div className="mt-[-350px]" data-testid="loading-spinner">
+        <ClipLoader color={'#3949AB'} loading={loading} size={50} />
+      </div>
     </div>
   );
 };

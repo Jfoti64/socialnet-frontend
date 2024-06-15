@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getPost, getCommentsForPost, toggleLike } from '../api';
 import ProfilePicture from '../components/common/ProfilePicture';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
@@ -41,7 +42,7 @@ const PostPage = () => {
   };
 
   if (!post) {
-    return <div className="flex h-screen justify-center items-center text-white">Loading...</div>;
+    return <LoadingSpinner loading={true} />;
   }
 
   return (

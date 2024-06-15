@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getUserProfile, getUserPosts, getUserFriends, getUserComments, getPost } from '../api';
 import ProfilePicture from '../components/common/ProfilePicture';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useAuth } from '../hooks/useAuth';
 import SendFriendRequestButton from '../components/common/SendFriendRequestButton';
 
@@ -84,7 +85,7 @@ const UserProfile = () => {
             {error && (
               <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>
             )}
-            {!isCheckingAuth && !userProfile && !error && <div>Loading...</div>}
+            {!isCheckingAuth && !userProfile && !error && <LoadingSpinner loading={!userProfile} />}
             {userProfile && (
               <div>
                 <div className="bg-gray-800 text-white p-4 rounded-md shadow-md">
@@ -164,7 +165,7 @@ const UserProfile = () => {
                           <h2 className="text-xl font-semibold text-white">Posts</h2>
                           <ul className="mt-2 space-y-2">
                             {userPosts === null ? (
-                              <p className="text-gray-400">Loading...</p>
+                              <LoadingSpinner loading={userPosts === null} />
                             ) : userPosts.length > 0 ? (
                               sortedPosts.map((post) => (
                                 <li key={post._id} className="bg-gray-700 p-4 rounded-md">
@@ -206,7 +207,7 @@ const UserProfile = () => {
                           <h2 className="text-xl font-semibold text-white">Friends</h2>
                           <ul className="mt-2 space-y-2">
                             {userFriends === null ? (
-                              <p className="text-gray-400">Loading...</p>
+                              <LoadingSpinner loading={userFriends === null} />
                             ) : userFriends.length > 0 ? (
                               userFriends.map((friend) => (
                                 <li
@@ -236,7 +237,7 @@ const UserProfile = () => {
                           <h2 className="text-xl font-semibold text-white">Comments</h2>
                           <ul className="mt-2 space-y-2">
                             {userComments === null ? (
-                              <p className="text-gray-400">Loading...</p>
+                              <LoadingSpinner loading={userComments === null} />
                             ) : userComments.length > 0 ? (
                               sortedComments.map((comment) => (
                                 <li key={comment._id} className="bg-gray-700 p-4 rounded-md">

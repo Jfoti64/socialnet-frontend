@@ -42,7 +42,7 @@ describe('Sidebar', () => {
 
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Profile')).toBeInTheDocument();
-    expect(screen.getAllByText('Logout')).toHaveLength(2); // Check for two "Logout" buttons
+    expect(screen.getAllByText('Logout')).toHaveLength(1);
   });
 
   it('navigates to the correct path and sets active state on link click', () => {

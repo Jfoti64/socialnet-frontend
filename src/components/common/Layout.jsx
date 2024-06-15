@@ -5,13 +5,16 @@ import Header from './Header';
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const hideHeaderAndSidebar = location.pathname === '/login' || location.pathname === '/register';
+
+  // Determine if the current route is the Dashboard
+  const isDashboard = location.pathname === '/';
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
-      {!hideHeaderAndSidebar && <Sidebar />}
+      <Sidebar />
       <div className="flex-1 flex flex-col">
-        {!hideHeaderAndSidebar && <Header />}
+        {/* Conditionally render the Header based on the current path */}
+        {!isDashboard && <Header />}
         <main className="flex-1 overflow-auto bg-gray-900 text-white">{children}</main>
       </div>
     </div>

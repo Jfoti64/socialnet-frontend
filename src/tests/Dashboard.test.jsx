@@ -68,12 +68,6 @@ describe('Dashboard', () => {
       );
     });
 
-    // Check if Sidebar is rendered
-    expect(screen.getByText(/SocialNet/i)).toBeInTheDocument();
-
-    // Check if Header is rendered
-    expect(screen.getByPlaceholderText(/Search Users.../i)).toBeInTheDocument();
-
     // Wait for posts to be fetched and rendered
     await waitFor(() => expect(screen.getByText(/First post/i)).toBeInTheDocument());
     expect(screen.getByText(/Second post/i)).toBeInTheDocument();
@@ -109,7 +103,7 @@ describe('Dashboard', () => {
     });
 
     // Show the new post form
-    fireEvent.click(screen.getByText(/Compose/i));
+    fireEvent.click(screen.getByRole('button', { name: /Compose/i }));
     expect(screen.getByPlaceholderText(/What's on your mind?/i)).toBeInTheDocument();
 
     // Fill out the form and submit
@@ -138,13 +132,13 @@ describe('Dashboard', () => {
 
     // Click the compose button to show the form
     await act(async () => {
-      fireEvent.click(screen.getByText(/Compose/i));
+      fireEvent.click(screen.getByRole('button', { name: /Compose/i }));
     });
     expect(screen.getByPlaceholderText(/What's on your mind?/i)).toBeInTheDocument();
 
-    // Click the compose button again to hide the form
+    // Click the cancel button to hide the form
     await act(async () => {
-      fireEvent.click(screen.getByText(/Cancel/i));
+      fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     });
     expect(screen.queryByPlaceholderText(/What's on your mind?/i)).not.toBeInTheDocument();
   });

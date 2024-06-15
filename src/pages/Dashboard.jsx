@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Post from '../components/post/Post';
 import NewPostForm from '../components/post/NewPostForm';
+import Header from '../components/common/Header';
 import { getFeedPosts, createPost } from '../api';
 
 const Dashboard = () => {
@@ -38,6 +39,12 @@ const Dashboard = () => {
   return (
     <div className="flex h-screen bg-gray-900 text-white">
       <div className="flex-1 flex flex-col">
+        <Header
+          showComposeButton={true}
+          showForm={showForm}
+          onComposeClick={() => setShowForm((prev) => !prev)}
+          refreshPosts={fetchPosts}
+        />
         <div className="p-10 overflow-auto flex justify-center">
           <div className="max-w-4xl w-full">
             {showForm && <NewPostForm onCreatePost={handleCreatePost} />}

@@ -12,6 +12,7 @@ const SendFriendRequestButton = ({ requesterId, recipientId }) => {
         const { status } = await checkFriendRequestStatus(requesterId, recipientId);
         setStatus(status);
       } catch (error) {
+        setError('Error checking friend request status');
         console.error('Error checking friend request status:', error);
       }
     };
@@ -32,6 +33,8 @@ const SendFriendRequestButton = ({ requesterId, recipientId }) => {
       console.error('Error sending friend request:', error);
     }
   };
+
+  if (status === 'friends') return null;
 
   return (
     <div>

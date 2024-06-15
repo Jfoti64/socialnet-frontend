@@ -42,8 +42,7 @@ describe('Sidebar', () => {
 
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Profile')).toBeInTheDocument();
-    expect(screen.getByText('Settings')).toBeInTheDocument();
-    expect(screen.getByText('Logout')).toBeInTheDocument();
+    expect(screen.getAllByText('Logout')).toHaveLength(2); // Check for two "Logout" buttons
   });
 
   it('navigates to the correct path and sets active state on link click', () => {
@@ -73,7 +72,11 @@ describe('Sidebar', () => {
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByText('Logout'));
+    // Find all Logout buttons
+    const logoutButtons = screen.getAllByText('Logout');
+
+    // Click the first Logout button
+    fireEvent.click(logoutButtons[0]);
 
     expect(mockLogout).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/login');

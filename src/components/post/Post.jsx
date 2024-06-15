@@ -9,6 +9,8 @@ import { getCommentsForPost, toggleLike, createComment } from '../../api';
 import Comment from './Comment';
 import ProfilePicture from '../common/ProfilePicture';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const Post = ({
   author,
@@ -84,7 +86,9 @@ const Post = ({
       </div>
       <div className="mb-4">
         <Link to={`/post/${postId}`}>
-          <p>{content}</p>
+          <ReactMarkdown className="whitespace-pre-wrap" remarkPlugins={[remarkGfm]}>
+            {content}
+          </ReactMarkdown>
         </Link>
       </div>
       <div className="flex items-center space-x-4 mb-4">

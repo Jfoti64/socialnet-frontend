@@ -6,6 +6,8 @@ import ProfilePicture from '../components/common/ProfilePicture';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useAuth } from '../hooks/useAuth';
 import SendFriendRequestButton from '../components/common/SendFriendRequestButton';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -190,9 +192,11 @@ const UserProfile = () => {
                                     </div>
                                   </div>
                                   <Link to={`/post/${post._id}`}>
-                                    <p className="mt-2 text-white hover:underline">
-                                      {post.content}
-                                    </p>
+                                    <div className="whitespace-pre-wrap">
+                                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {post.content}
+                                      </ReactMarkdown>
+                                    </div>
                                   </Link>
                                 </li>
                               ))
@@ -268,7 +272,11 @@ const UserProfile = () => {
                                       </Link>
                                     </div>
                                   </div>
-                                  <p className="mt-2 text-white">{comment.content}</p>
+                                  <div className="whitespace-pre-wrap">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                      {comment.content}
+                                    </ReactMarkdown>
+                                  </div>
                                 </li>
                               ))
                             ) : (

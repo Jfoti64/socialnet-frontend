@@ -6,6 +6,8 @@ import ProfilePicture from '../components/common/ProfilePicture';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const PostPage = () => {
   const { postId } = useParams();
@@ -66,7 +68,9 @@ const PostPage = () => {
                   <p className="text-gray-400">{new Date(post.createdAt).toLocaleString()}</p>
                 </div>
               </div>
-              <p className="text-lg">{post.content}</p>
+              <div className="whitespace-pre-wrap">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+              </div>
               <div className="flex items-center space-x-4 mt-4">
                 <button
                   onClick={handleLikeToggle}

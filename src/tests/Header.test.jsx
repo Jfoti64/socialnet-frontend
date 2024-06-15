@@ -1,3 +1,4 @@
+// src/tests/Header.test.jsx
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import Header from '../components/common/Header';
 import * as api from '../api';

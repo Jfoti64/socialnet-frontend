@@ -1,3 +1,4 @@
+// src/components/common/Header.jsx
 import { useState, useEffect, useRef } from 'react';
 import { BellIcon, PencilSquareIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import PropTypes from 'prop-types';
@@ -7,7 +8,7 @@ import {
   rejectFriendRequest,
   searchUsers,
 } from '../../api';
-import Notification from './Notification'; // Import the Notification component
+import Notification from './Notification';
 
 const Header = ({
   showForm = false,
@@ -17,14 +18,15 @@ const Header = ({
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [friendRequests, setFriendRequests] = useState([]);
-  const [notification, setNotification] = useState(null); // State for notification
+  const [notification, setNotification] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState(''); // Add error state
-  const [loading, setLoading] = useState(false); // Loading state for friend requests
-  const [searchLoading, setSearchLoading] = useState(false); // Loading state for search
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const dropdownRef = useRef(null);
   const bellRef = useRef(null);
+  const searchDropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchFriendRequests = async () => {
@@ -51,11 +53,11 @@ const Header = ({
     try {
       await acceptFriendRequest(requesterId);
       setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
-      setNotification({ message: 'Friend request accepted', type: 'success', duration: 3000 }); // Show success notification
-      refreshPosts(); // Refresh posts after accepting a friend request
+      setNotification({ message: 'Friend request accepted', type: 'success', duration: 3000 });
+      refreshPosts();
       setShowNotifications(false);
     } catch (error) {
-      setNotification({ message: 'Error accepting friend request', type: 'error', duration: 3000 }); // Show error notification
+      setNotification({ message: 'Error accepting friend request', type: 'error', duration: 3000 });
       console.error('Error accepting friend request:', error);
     }
   };
@@ -64,26 +66,29 @@ const Header = ({
     try {
       await rejectFriendRequest(requesterId);
       setFriendRequests(friendRequests.filter((request) => request.requester._id !== requesterId));
-      setNotification({ message: 'Friend request rejected', type: 'success', duration: 3000 }); // Show success notification
+      setNotification({ message: 'Friend request rejected', type: 'success', duration: 3000 });
       setShowNotifications(false);
     } catch (error) {
-      setNotification({ message: 'Error rejecting friend request', type: 'error', duration: 3000 }); // Show error notification
+      setNotification({ message: 'Error rejecting friend request', type: 'error', duration: 3000 });
       console.error('Error rejecting friend request:', error);
     }
   };
 
   const handleClickOutside = (event) => {
     if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target) &&
-      !bellRef.current.contains(event.target)
+      (dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        !bellRef.current.contains(event.target)) ||
+      (searchDropdownRef.current && !searchDropdownRef.current.contains(event.target))
     ) {
       setShowNotifications(false);
+      setSearchResults([]);
+      setSearchTerm('');
     }
   };
 
   useEffect(() => {
-    if (showNotifications) {
+    if (showNotifications || searchResults.length > 0) {
       document.addEventListener('mousedown', handleClickOutside);
     } else {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -92,7 +97,7 @@ const Header = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showNotifications]);
+  }, [showNotifications, searchResults]);
 
   const handleSearch = async (e) => {
     setSearchTerm(e.target.value);
@@ -114,26 +119,29 @@ const Header = ({
   };
 
   const handleCloseNotification = () => {
-    setNotification(null); // Close notification
+    setNotification(null);
   };
 
   return (
-    <header className="bg-gray-900 p-4 shadow-md flex items-center justify-between space-x-4">
+    <header className="bg-gray-800 p-4 shadow-md flex items-center justify-between space-x-4">
       <div className="relative w-1/2">
         <input
           type="text"
           placeholder="Search Users..."
-          className="bg-gray-800 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-600 w-full"
+          className="bg-gray-700 text-white rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-600 w-full"
           value={searchTerm}
           onChange={handleSearch}
         />
         {searchResults.length > 0 && (
-          <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50">
+          <div
+            ref={searchDropdownRef}
+            className="absolute mt-2 w-full bg-gray-700 text-white rounded-md shadow-lg z-50"
+          >
             <ul className="max-h-60 overflow-y-auto">
               {searchResults.map((user) => (
                 <li
                   key={user._id}
-                  className="p-2 hover:bg-gray-700 cursor-pointer"
+                  className="p-2 hover:bg-gray-600 cursor-pointer"
                   onClick={() => (window.location.href = `/profile/${user._id}`)}
                 >
                   <div className="flex items-center">
@@ -155,12 +163,12 @@ const Header = ({
           </div>
         )}
         {searchTerm && searchResults.length === 0 && !searchLoading && (
-          <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50 p-4">
+          <div className="absolute mt-2 w-full bg-gray-700 text-white rounded-md shadow-lg z-50 p-4">
             No users found
           </div>
         )}
         {searchLoading && (
-          <div className="absolute mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg z-50 p-4">
+          <div className="absolute mt-2 w-full bg-gray-700 text-white rounded-md shadow-lg z-50 p-4">
             Loading...
           </div>
         )}
@@ -169,7 +177,7 @@ const Header = ({
         <button
           ref={bellRef}
           onClick={handleBellClick}
-          className="relative bg-gray-800 text-white rounded-full p-2 hover:bg-gray-700"
+          className="relative bg-gray-700 text-white rounded-full p-2 hover:bg-gray-600"
           aria-label="Notifications"
         >
           <BellIcon className="w-6 h-6" />
@@ -194,7 +202,7 @@ const Header = ({
         {showNotifications && (
           <div
             ref={dropdownRef}
-            className="absolute right-0 top-12 mt-2 w-80 bg-gray-800 text-white rounded-md shadow-lg z-50"
+            className="absolute right-0 top-12 mt-2 w-80 bg-gray-700 text-white rounded-md shadow-lg z-50"
           >
             <div className="p-4">
               <h4 className="text-lg font-semibold">Friend Requests</h4>

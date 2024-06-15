@@ -42,11 +42,11 @@ const PostPage = () => {
   };
 
   if (!post) {
-    return <div>Loading...</div>;
+    return <div className="flex h-screen justify-center items-center text-white">Loading...</div>;
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-900 text-white">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header
@@ -61,7 +61,6 @@ const PostPage = () => {
               <ProfilePicture
                 profilePicture={post.author?.profilePicture}
                 alt={`${post.author?.firstName} ${post.author?.lastName}`}
-                className="w-10 h-10 rounded-full"
               />
               <div>
                 <Link
@@ -101,7 +100,6 @@ const PostPage = () => {
                     <ProfilePicture
                       profilePicture={comment.author?.profilePicture}
                       alt={`${comment.author?.firstName} ${comment.author?.lastName}`}
-                      className="w-8 h-8 rounded-full"
                     />
                     <div>
                       <Link

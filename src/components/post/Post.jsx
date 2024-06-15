@@ -37,7 +37,7 @@ const Post = ({
   }, [postId]);
 
   useEffect(() => {
-    fetchComments(); // Fetch comments initially to get the comment count
+    fetchComments();
   }, [fetchComments]);
 
   const handleLikeToggle = async () => {
@@ -56,7 +56,7 @@ const Post = ({
       try {
         await createComment(postId, commentText);
         setCommentText('');
-        fetchComments(); // Refresh comments after adding a new one
+        fetchComments();
       } catch (error) {
         console.error('Error creating comment:', error);
       }

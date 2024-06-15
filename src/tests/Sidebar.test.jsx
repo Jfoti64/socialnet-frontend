@@ -56,14 +56,14 @@ describe('Sidebar', () => {
     // Click on Profile link
     fireEvent.click(screen.getByText('Profile'));
 
-    expect(screen.getByText('Profile').closest('li')).toHaveClass('bg-gray-800');
-    expect(screen.getByText('Home').closest('li')).not.toHaveClass('bg-gray-800');
+    expect(screen.getByText('Profile').closest('li')).toHaveClass('bg-gray-700');
+    expect(screen.getByText('Home').closest('li')).not.toHaveClass('bg-gray-700');
 
     // Click on Home link
     fireEvent.click(screen.getByText('Home'));
 
-    expect(screen.getByText('Home').closest('li')).toHaveClass('bg-gray-800');
-    expect(screen.getByText('Profile').closest('li')).not.toHaveClass('bg-gray-800');
+    expect(screen.getByText('Home').closest('li')).toHaveClass('bg-gray-700');
+    expect(screen.getByText('Profile').closest('li')).not.toHaveClass('bg-gray-700');
   });
 
   it('calls logout and navigates to login on logout button click', () => {

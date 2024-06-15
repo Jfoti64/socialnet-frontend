@@ -11,12 +11,9 @@ const RegisterPage = () => {
   const handleRegister = async (data) => {
     try {
       await register(data);
-      // Only navigate if registration was successful
       navigate('/'); // Redirect to home page or dashboard after successful registration
     } catch (error) {
-      // Check for specific error codes/messages from the API and set an appropriate error message
       if (error.response && error.response.data) {
-        // Handle the case where the email is already taken
         if (error.response.data.msg === 'User already exists') {
           setErrorMessage('This email is already taken. Please use a different email.');
         } else {

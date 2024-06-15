@@ -33,7 +33,6 @@ const UserProfile = () => {
               getUserComments(userId),
             ]);
 
-            // Fetch post details for each comment
             const commentsWithPostDetails = await Promise.all(
               comments.map(async (comment) => {
                 const post = await getPost(comment.post);
@@ -51,7 +50,7 @@ const UserProfile = () => {
           }
         } catch (error) {
           setError('Error fetching user profile');
-          setUserProfile(null); // Ensure userProfile is null when there's an error
+          setUserProfile(null);
           console.error('Error fetching user profile:', error);
         }
       };
@@ -79,7 +78,7 @@ const UserProfile = () => {
   const sortedComments = userComments ? sortItems(userComments, sortCriteria, sortOrder) : [];
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-900 text-white">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header
@@ -249,14 +248,18 @@ const UserProfile = () => {
                                 <div className="flex items-center space-x-4">
                                   <ProfilePicture
                                     profilePicture={comment.author?.profilePicture}
-                                    alt={`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                                    alt={`${comment.author?.firstName || 'N/A'} ${
+                                      comment.author?.lastName || 'N/A'
+                                    }`}
                                   />
                                   <div>
                                     <Link
                                       to={`/profile/${comment.author?._id || ''}`}
                                       className="text-white hover:underline"
                                     >
-                                      {`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
+                                      {`${comment.author?.firstName || 'N/A'} ${
+                                        comment.author?.lastName || 'N/A'
+                                      }`}
                                     </Link>
                                     <p className="text-gray-400 text-sm">
                                       {new Date(comment.createdAt).toLocaleString()}

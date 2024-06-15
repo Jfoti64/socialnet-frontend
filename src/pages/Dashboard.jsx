@@ -7,14 +7,14 @@ import { getFeedPosts, createPost } from '../api';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
-  const [showForm, setShowForm] = useState(false); // State to manage form visibility
-  const [error, setError] = useState(''); // State to manage errors
+  const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState('');
 
   const fetchPosts = async () => {
     try {
       const postsData = await getFeedPosts();
       setPosts(postsData);
-      setError(''); // Clear any previous errors
+      setError('');
     } catch (error) {
       setError('Error fetching posts');
       console.error('Error fetching posts:', error);
@@ -24,8 +24,8 @@ const Dashboard = () => {
   const handleCreatePost = async (content) => {
     try {
       await createPost({ content });
-      fetchPosts(); // Refresh posts after creating a new one
-      setShowForm(false); // Hide form after post creation
+      fetchPosts();
+      setShowForm(false);
     } catch (error) {
       setError('Error creating post');
       console.error('Error creating post:', error);
@@ -37,7 +37,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-900 text-white">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Header
@@ -46,7 +46,7 @@ const Dashboard = () => {
           refreshPosts={fetchPosts}
           showComposeButton={true}
         />
-        <div className="p-10 text-white overflow-auto">
+        <div className="p-10 overflow-auto">
           {showForm && <NewPostForm onCreatePost={handleCreatePost} />}
           {error && (
             <div className="bg-red-500 text-white p-4 rounded-md shadow-md mb-4">{error}</div>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const NewPostForm = ({ onCreatePost }) => {
   const [content, setContent] = useState('');
-  const [error, setError] = useState(''); // Add error state
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (error) {
@@ -11,7 +11,6 @@ const NewPostForm = ({ onCreatePost }) => {
         setError('');
       }, 3000);
 
-      // Clear the timeout if the component unmounts or error changes
       return () => clearTimeout(timer);
     }
   }, [error]);
@@ -21,9 +20,9 @@ const NewPostForm = ({ onCreatePost }) => {
     if (content.trim()) {
       await onCreatePost(content);
       setContent('');
-      setError(''); // Clear error after successful post creation
+      setError('');
     } else {
-      setError('Post content cannot be empty'); // Set error message
+      setError('Post content cannot be empty');
     }
   };
 
@@ -36,7 +35,7 @@ const NewPostForm = ({ onCreatePost }) => {
         className="w-full bg-gray-700 text-white rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-600 mb-4"
         rows="3"
       ></textarea>
-      {error && <p className="text-red-600 text-sm mb-4">{error}</p>} {/* Display error message */}
+      {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
       <button
         type="submit"
         className="bg-indigo-600 text-white rounded-md py-2 px-4 hover:bg-indigo-500"

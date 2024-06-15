@@ -32,37 +32,37 @@ const Sidebar = () => {
   }, [location]);
 
   return (
-    <div className="flex flex-col h-screen p-3 bg-gray-900 shadow w-60">
+    <div className="flex flex-col h-screen p-3 bg-gray-800 shadow-lg w-60">
       <div className="space-y-3">
-        <div className="flex items-center">
+        <div className="flex items-center justify-center py-4">
           <span className="text-2xl font-bold text-white">SocialNet</span>
         </div>
         <div className="flex-1">
           <ul className="pt-2 pb-4 space-y-1 text-sm">
-            <li className={`rounded-lg ${active === 'home' ? 'bg-gray-800' : ''}`}>
+            <li className={`rounded-lg ${active === 'home' ? 'bg-gray-700' : ''}`}>
               <Link
                 to="/"
-                className="flex items-center p-2 space-x-3 rounded-md text-white"
+                className="flex items-center p-2 space-x-3 rounded-md text-white hover:bg-gray-700"
                 onClick={() => setActive('home')}
               >
                 <HomeIcon className="w-6 h-6" />
                 <span>Home</span>
               </Link>
             </li>
-            <li className={`rounded-lg ${active === 'profile' ? 'bg-gray-800' : ''}`}>
+            <li className={`rounded-lg ${active === 'profile' ? 'bg-gray-700' : ''}`}>
               <Link
                 to={`/profile/${user?.id}`}
-                className="flex items-center p-2 space-x-3 rounded-md text-white"
+                className="flex items-center p-2 space-x-3 rounded-md text-white hover:bg-gray-700"
                 onClick={() => setActive('profile')}
               >
                 <UserIcon className="w-6 h-6" />
                 <span>Profile</span>
               </Link>
             </li>
-            <li className={`rounded-lg ${active === 'settings' ? 'bg-gray-800' : ''}`}>
+            <li className={`rounded-lg ${active === 'settings' ? 'bg-gray-700' : ''}`}>
               <Link
                 to="/settings"
-                className="flex items-center p-2 space-x-3 rounded-md text-white"
+                className="flex items-center p-2 space-x-3 rounded-md text-white hover:bg-gray-700"
                 onClick={() => setActive('settings')}
               >
                 <Cog6ToothIcon className="w-6 h-6" />
@@ -72,15 +72,13 @@ const Sidebar = () => {
           </ul>
         </div>
         <div className="pt-2 pb-4 space-y-1 text-sm">
-          <li className="rounded-lg">
-            <button
-              className="flex items-center p-2 space-x-3 rounded-md text-white w-full"
-              onClick={handleLogout}
-            >
-              <ArrowLeftOnRectangleIcon className="w-6 h-6" />
-              <span>Logout</span>
-            </button>
-          </li>
+          <button
+            className="flex items-center p-2 space-x-3 rounded-md text-white hover:bg-gray-700 w-full"
+            onClick={handleLogout}
+          >
+            <ArrowLeftOnRectangleIcon className="w-6 h-6" />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     </div>

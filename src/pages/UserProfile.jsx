@@ -110,7 +110,7 @@ const UserProfile = () => {
               {user.id !== userId && !userProfile.friends.includes(user.id) ? (
                 <div className="mt-4 bg-gray-700 text-white p-4 rounded-md shadow-md">
                   <p>You must be friends with this user to view their profile details.</p>
-                  <SendFriendRequestButton recipientId={userId} />
+                  <SendFriendRequestButton requesterId={user.id} recipientId={userId} />
                 </div>
               ) : (
                 <div className="mt-4">
@@ -249,18 +249,14 @@ const UserProfile = () => {
                                 <div className="flex items-center space-x-4">
                                   <ProfilePicture
                                     profilePicture={comment.author?.profilePicture}
-                                    alt={`${comment.author?.firstName || 'N/A'} ${
-                                      comment.author?.lastName || 'N/A'
-                                    }`}
+                                    alt={`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
                                   />
                                   <div>
                                     <Link
                                       to={`/profile/${comment.author?._id || ''}`}
                                       className="text-white hover:underline"
                                     >
-                                      {`${comment.author?.firstName || 'N/A'} ${
-                                        comment.author?.lastName || 'N/A'
-                                      }`}
+                                      {`${comment.author?.firstName || 'N/A'} ${comment.author?.lastName || 'N/A'}`}
                                     </Link>
                                     <p className="text-gray-400 text-sm">
                                       {new Date(comment.createdAt).toLocaleString()}

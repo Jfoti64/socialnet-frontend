@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { sendFriendRequest } from '../../api';
+import { sendFriendRequest, checkFriendRequestStatus } from '../../api';
 
-const SendFriendRequestButton = ({ recipientId }) => {
+const SendFriendRequestButton = ({ requesterId, recipientId }) => {
   const [status, setStatus] = useState(null);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchFriendRequestStatus = async () => {
+      try {
+        const { status } = await checkFriendRequestStatus(requesterId, recipientId);
+        setStatus(status);
+      } catch (error) {
+        console.error('Error checking friend request status:', error);
+      }
+    };
+
+    fetchFriendRequestStatus();
+  }, [requesterId, recipientId]);
 
   const handleSendFriendRequest = async () => {
     try {
@@ -38,6 +51,7 @@ const SendFriendRequestButton = ({ recipientId }) => {
 };
 
 SendFriendRequestButton.propTypes = {
+  requesterId: PropTypes.string.isRequired,
   recipientId: PropTypes.string.isRequired,
 };
 

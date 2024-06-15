@@ -85,6 +85,15 @@ export const acceptFriendRequest = async (requesterId) => {
   return response.data;
 };
 
+export const checkFriendRequestStatus = async (requesterId, recipientId) => {
+  try {
+    const response = await api.get(`/users/friend-request-status/${requesterId}/${recipientId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const rejectFriendRequest = async (requesterId) => {
   const response = await api.post('/users/reject-friend-request', { requesterId });
   return response.data;

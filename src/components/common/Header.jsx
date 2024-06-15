@@ -253,7 +253,7 @@ const Header = ({
 Header.propTypes = {
   showForm: PropTypes.bool,
   onComposeClick: PropTypes.func,
-  refreshPosts: PropTypes.func.isRequired,
+  refreshPosts: PropTypes.func,
   showComposeButton: PropTypes.bool,
 };
 

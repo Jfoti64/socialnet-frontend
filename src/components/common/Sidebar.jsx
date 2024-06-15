@@ -1,6 +1,6 @@
 // src/components/common/Sidebar.jsx
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   HomeIcon,
   UserIcon,
@@ -11,13 +11,25 @@ import { useAuth } from '../../hooks/useAuth';
 
 const Sidebar = () => {
   const [active, setActive] = useState('home');
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    if (currentPath === '/') {
+      setActive('home');
+    } else if (currentPath.startsWith('/profile')) {
+      setActive('profile');
+    } else if (currentPath === '/settings') {
+      setActive('settings');
+    }
+  }, [location]);
 
   return (
     <div className="flex flex-col h-screen p-3 bg-gray-900 shadow w-60">
@@ -39,7 +51,7 @@ const Sidebar = () => {
             </li>
             <li className={`rounded-lg ${active === 'profile' ? 'bg-gray-800' : ''}`}>
               <Link
-                to="#"
+                to={`/profile/${user?.id}`}
                 className="flex items-center p-2 space-x-3 rounded-md text-white"
                 onClick={() => setActive('profile')}
               >
@@ -49,7 +61,7 @@ const Sidebar = () => {
             </li>
             <li className={`rounded-lg ${active === 'settings' ? 'bg-gray-800' : ''}`}>
               <Link
-                to="#"
+                to="/settings"
                 className="flex items-center p-2 space-x-3 rounded-md text-white"
                 onClick={() => setActive('settings')}
               >

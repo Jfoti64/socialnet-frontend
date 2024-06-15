@@ -8,6 +8,7 @@ import AuthProvider from './context/AuthContext';
 import AuthSuccess from './pages/AuthSuccess';
 import UserProfile from './pages/UserProfile';
 import PostPage from './pages/PostPage';
+import Layout from './components/common/Layout';
 
 const App = () => {
   return (
@@ -17,9 +18,30 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/auth/success" element={<AuthSuccess />} />
-          <Route path="/profile/:userId" element={<ProtectedRoute element={UserProfile} />} />
-          <Route path="/" element={<ProtectedRoute element={Dashboard} />} />
-          <Route path="/post/:postId" element={<ProtectedRoute element={PostPage} />} />
+          <Route
+            path="/profile/:userId"
+            element={
+              <Layout>
+                <ProtectedRoute element={UserProfile} />
+              </Layout>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <Layout>
+                <ProtectedRoute element={Dashboard} />
+              </Layout>
+            }
+          />
+          <Route
+            path="/post/:postId"
+            element={
+              <Layout>
+                <ProtectedRoute element={PostPage} />
+              </Layout>
+            }
+          />
         </Routes>
       </AuthProvider>
     </Router>

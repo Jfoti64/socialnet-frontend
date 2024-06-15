@@ -123,8 +123,8 @@ const Header = ({
   };
 
   return (
-    <header className="bg-gray-800 p-4 shadow-md flex items-center justify-between space-x-4">
-      <div className="relative w-1/2">
+    <header className="bg-gray-800 p-4 shadow-md flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0 space-x-4">
+      <div className="relative w-full md:w-1/2">
         <input
           type="text"
           placeholder="Search Users..."

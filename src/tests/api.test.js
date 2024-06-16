@@ -321,4 +321,72 @@ describe('API functions', () => {
     expect(response).toEqual(mockData);
     expect(mockAxiosInstance.get).toHaveBeenCalledWith('/users/search?q=');
   });
+
+  it('should validate response structure for getFeedPosts API', async () => {
+    const mockData = [{ id: '1', content: 'Post 1' }];
+    mockAxiosInstance.get.mockResolvedValue({ data: mockData });
+
+    const response = await api.getFeedPosts();
+
+    expect(response).toEqual(mockData);
+    expect(Array.isArray(response)).toBe(true);
+    response.forEach((post) => {
+      expect(post).toHaveProperty('id');
+      expect(post).toHaveProperty('content');
+    });
+  });
+
+  it('should handle network errors gracefully', async () => {
+    const mockError = new Error('Network Error');
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    try {
+      await api.getFeedPosts();
+    } catch (error) {
+      expect(error).toEqual(mockError);
+    }
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/posts/feed');
+  });
+
+  it('should enforce rate limiting', async () => {
+    const mockError = { response: { status: 429, data: { message: 'Too many requests' } } };
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    try {
+      await api.getFeedPosts();
+    } catch (error) {
+      expect(error.response.status).toBe(429);
+      expect(error.response.data.message).toBe('Too many requests');
+    }
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/posts/feed');
+  });
+
+  it('should handle invalid input data for createPost API', async () => {
+    const mockError = { response: { data: { message: 'Invalid content' } } };
+    mockAxiosInstance.post.mockRejectedValue(mockError);
+
+    try {
+      await api.createPost({ content: '' });
+    } catch (error) {
+      expect(error.response.data.message).toBe('Invalid content');
+    }
+
+    expect(mockAxiosInstance.post).toHaveBeenCalledWith('/posts', { content: '' });
+  });
+
+  it('should test unauthorized access for getUserProfile API', async () => {
+    const mockError = { response: { status: 401, data: { message: 'Unauthorized' } } };
+    mockAxiosInstance.get.mockRejectedValue(mockError);
+
+    try {
+      await api.getUserProfile('1');
+    } catch (error) {
+      expect(error.response.status).toBe(401);
+      expect(error.response.data.message).toBe('Unauthorized');
+    }
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/users/profile/1');
+  });
 });

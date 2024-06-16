@@ -125,7 +125,7 @@ Check out the live demo of the application [here](https://socialnet-jfoti64.netl
 
 ## Screenshots
 
-![Screenshot 1](/screenshots/Screenshot%202024-06-16%20at%206.17.26 PM.png)
+![Screenshot 1](/screenshots/Screenshot%202024-06-16%20at%206.25.14 PM.png)
 ![Screenshot 2](/screenshots/Screenshot%202024-06-16%20at%206.18.16 PM.png)
 ![Screenshot 3](/screenshots/Screenshot%202024-06-16%20at%206.19.40 PM.png)
 

@@ -55,6 +55,11 @@ export const createPost = async (postData) => {
   return response.data;
 };
 
+export const deletePost = async (postId) => {
+  const response = await api.delete(`/posts/${postId}`);
+  return response.data;
+};
+
 export const getCommentsForPost = async (postId) => {
   const response = await api.get(`/posts/${postId}/comments`);
   return response.data;

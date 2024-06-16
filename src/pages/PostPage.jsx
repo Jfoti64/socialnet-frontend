@@ -1,4 +1,3 @@
-// src/pages/PostPage.jsx
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPost, getCommentsForPost, toggleLike, deletePost } from '../api';
@@ -7,6 +6,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import { useAuth } from '../hooks/useAuth';
+import { format } from 'date-fns';
 
 const PostPage = () => {
   const { postId } = useParams();
@@ -75,7 +75,7 @@ const PostPage = () => {
                   >
                     {`${post.author?.firstName} ${post.author?.lastName}`}
                   </Link>
-                  <p className="text-gray-400">{new Date(post.createdAt).toLocaleString()}</p>
+                  <p className="text-gray-400">{format(new Date(post.createdAt), 'PP')}</p>
                 </div>
               </div>
               <p className="text-lg">{post.content}</p>
@@ -124,7 +124,7 @@ const PostPage = () => {
                         </Link>
                         <p className="text-white">{comment.content}</p>
                         <p className="text-gray-400 text-sm">
-                          {new Date(comment.createdAt).toLocaleString()}
+                          {format(new Date(comment.createdAt), 'PP')}
                         </p>
                       </div>
                     </div>

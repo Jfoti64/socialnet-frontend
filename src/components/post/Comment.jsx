@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import ProfilePicture from '../common/ProfilePicture';
+import { format } from 'date-fns';
 
 const Comment = ({ author, content, createdAt }) => {
   return (
@@ -10,7 +11,7 @@ const Comment = ({ author, content, createdAt }) => {
         )}
         <div className="flex flex-col ml-2">
           <span className="font-semibold text-white">{`${author.firstName} ${author.lastName}`}</span>
-          <span className="text-sm text-gray-400">{new Date(createdAt).toLocaleDateString()}</span>
+          <span className="text-sm text-gray-400">{format(new Date(createdAt), 'PP')}</span>
         </div>
       </div>
       <p className="text-white">{content}</p>

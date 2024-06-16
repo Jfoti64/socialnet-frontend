@@ -11,6 +11,7 @@ import ProfilePicture from '../common/ProfilePicture';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { format } from 'date-fns';
 
 const Post = ({
   author,
@@ -82,7 +83,7 @@ const Post = ({
             {`${author.firstName} ${author.lastName}`}
           </Link>
         </div>
-        <div className="text-sm text-gray-400">{new Date(createdAt).toLocaleDateString()}</div>
+        <div className="text-sm text-gray-400">{format(new Date(createdAt), 'PP')}</div>
       </div>
       <div className="mb-4">
         <Link to={`/post/${postId}`}>

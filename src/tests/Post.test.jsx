@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { getCommentsForPost, toggleLike, createComment } from '../api'; // Import the API functions
+import { format } from 'date-fns';
 
 // Mock the API functions
 vi.mock('../api', () => ({
@@ -54,8 +55,10 @@ describe('Post Component', () => {
     // Verify the post content is rendered
     expect(screen.getByText('First post')).toBeInTheDocument();
     expect(screen.getByText('John Doe')).toBeInTheDocument();
-    // Adjust the date format to match what is rendered
-    expect(screen.getByText(/5\/14\/2023|5\/15\/2023/i)).toBeInTheDocument();
+
+    // Format the date to match the rendered output
+    const expectedDate = format(new Date(mockPost.createdAt), 'PP');
+    expect(screen.getByText(expectedDate)).toBeInTheDocument();
 
     // Verify the initial like count
     expect(screen.getByText('0 Likes')).toBeInTheDocument();

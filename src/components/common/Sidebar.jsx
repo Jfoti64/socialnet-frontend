@@ -38,7 +38,9 @@ const Sidebar = () => {
   return (
     <div className="bg-gray-800 shadow-lg w-full md:w-60 md:h-full md:flex md:flex-col">
       <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 items-center md:items-start justify-between md:justify-start p-4 md:py-4 md:px-2">
-        <div className="text-2xl font-bold text-white">SocialNet</div>
+        <Link to="/" className="text-2xl font-bold text-white" onClick={() => setActive('home')}>
+          SocialNet
+        </Link>
         <button className="md:hidden text-white" onClick={toggleMenu}>
           {isMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
         </button>

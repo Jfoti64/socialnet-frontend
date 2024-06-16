@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import ProfilePicture from '../common/ProfilePicture';
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 const Comment = ({ author, content, createdAt }) => {
   return (
@@ -10,7 +11,9 @@ const Comment = ({ author, content, createdAt }) => {
           <ProfilePicture profilePicture={author.profilePicture} alt="Profile" size="small" />
         )}
         <div className="flex flex-col ml-2">
-          <span className="font-semibold text-white">{`${author.firstName} ${author.lastName}`}</span>
+          <Link to={`/profile/${author._id}`} className="font-semibold text-white hover:underline">
+            {`${author.firstName} ${author.lastName}`}
+          </Link>
           <span className="text-sm text-gray-400">{format(new Date(createdAt), 'PP')}</span>
         </div>
       </div>
@@ -21,6 +24,7 @@ const Comment = ({ author, content, createdAt }) => {
 
 Comment.propTypes = {
   author: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     profilePicture: PropTypes.string,

@@ -1,20 +1,21 @@
 // src/pages/PostPage.jsx
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { getPost, getCommentsForPost, toggleLike } from '../api';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { getPost, getCommentsForPost, toggleLike, deletePost } from '../api';
 import ProfilePicture from '../components/common/ProfilePicture';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { useAuth } from '../hooks/useAuth';
 
 const PostPage = () => {
   const { postId } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(0);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPostAndComments = async () => {
@@ -23,7 +24,7 @@ const PostPage = () => {
         const commentsData = await getCommentsForPost(postId);
         setPost(postData);
         setComments(commentsData);
-        setIsLiked(postData.likes.includes(postData.author._id)); // Assuming current user id is in the likes array
+        setIsLiked(postData.likes.includes(user.id)); // Assuming current user id is in the likes array
         setLikes(postData.likes.length);
       } catch (error) {
         console.error('Error fetching post or comments:', error);
@@ -31,7 +32,7 @@ const PostPage = () => {
     };
 
     fetchPostAndComments();
-  }, [postId]);
+  }, [postId, user.id]);
 
   const handleLikeToggle = async () => {
     try {
@@ -40,6 +41,15 @@ const PostPage = () => {
       setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
     } catch (error) {
       console.error('Error toggling like:', error);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(postId);
+      navigate('/'); // Redirect to homepage after successful deletion
+    } catch (error) {
+      console.error('Error deleting post:', error);
     }
   };
 
@@ -68,9 +78,7 @@ const PostPage = () => {
                   <p className="text-gray-400">{new Date(post.createdAt).toLocaleString()}</p>
                 </div>
               </div>
-              <div className="whitespace-pre-wrap">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
-              </div>
+              <p className="text-lg">{post.content}</p>
               <div className="flex items-center space-x-4 mt-4">
                 <button
                   onClick={handleLikeToggle}
@@ -87,6 +95,14 @@ const PostPage = () => {
                     {likes} Like{likes !== 1 && 's'}
                   </span>
                 </button>
+                {post.author._id === user.id && (
+                  <button
+                    onClick={handleDeletePost}
+                    className="flex items-center text-sm text-gray-400 hover:text-red-500"
+                  >
+                    Delete Post
+                  </button>
+                )}
               </div>
             </div>
             <div className="bg-gray-800 text-white p-4 rounded-md shadow-md">

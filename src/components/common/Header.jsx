@@ -123,7 +123,7 @@ const Header = ({
   };
 
   return (
-    <header className="bg-gray-800 p-4 shadow-md flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0 space-x-4">
+    <header className="bg-gray-800 p-4 shadow-md flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0 space-x-4 gap-2">
       <div className="relative w-full md:w-1/2">
         <input
           type="text"

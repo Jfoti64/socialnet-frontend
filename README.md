@@ -12,6 +12,11 @@ SocialNet is a social networking platform. This repository contains the frontend
 - [Environment Variables](#environment-variables)
 - [Testing](#testing)
 - [Deployment](#deployment)
+- [Demo](#demo)
+- [Screenshots](#screenshots)
+- [Project Structure](#project-structure)
+- [Future Enhancements](#future-enhancements)
+- [Contact](#contact)
 - [License](#license)
 
 ## Introduction
@@ -113,6 +118,40 @@ Ensure your `netlify.toml` file is configured correctly:
 [context.production.environment]
   VITE_API_BASE_URL = "https://your-backend-api-url"
 ```
+
+## Demo
+
+Check out the live demo of the application [here](https://socialnet-jfoti64.netlify.app).
+
+## Screenshots
+
+![Screenshot 1](/screenshots/Screenshot%202024-06-16%20at%206.17.26 PM.png)
+![Screenshot 2](/screenshots/Screenshot%202024-06-16%20at%206.18.16 PM.png)
+![Screenshot 3](/screenshots/Screenshot%202024-06-16%20at%206.19.40 PM.png)
+
+## Project Structure
+
+```
+/src
+  /components  # Reusable UI components
+  /context     # Context providers for state management
+  /pages       # Page components
+  /services    # Services for API calls
+  /utils       # Utility functions
+  App.jsx      # Main application component
+  main.jsx     # Entry point for the React application
+```
+
+## Future Enhancements
+
+- Implement real-time notifications for friend requests and messages
+- Add image and video upload functionality in posts
+- Improve accessibility features
+- Add more unit and integration tests for all components
+
+## Contact
+
+If you have any questions or suggestions, feel free to reach out to me at JoshuaFoti64@gmail.com.
 
 ## License
 
